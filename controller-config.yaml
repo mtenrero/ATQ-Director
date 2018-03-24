@@ -1,7 +1,7 @@
-port: 1050
+port: 9050
 images:
-  - name: mtenrero/jmeter
-    variables:
+  - imageName: mtenrero/jmeter
+    args:
       - name: MODE
         required: true
       - name: TEST_NAME
