@@ -1,0 +1,7 @@
+{
+  "name": "Automation Test Queue - Director",
+  "version": "0.1.0",
+  "description": "Automation Test Queue Director REST API documentation",
+  "title": "Automation Test Queue Director",
+  "url" : "https://localhost:9050/v1"
+}
