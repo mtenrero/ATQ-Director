@@ -4,7 +4,7 @@ import "github.com/satori/go.uuid"
 
 // NewUUID Creates new UUID
 func NewUUID() string {
-	uniqueid, _ := uuid.NewV4()
+	uniqueid := uuid.NewV4()
 
 	return uniqueid.String()
 }
