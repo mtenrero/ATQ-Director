@@ -1,2 +1,8 @@
 vendor
 vendor/*
+
+Gopkg.lock
+
+*.test
+
+coverage.txt

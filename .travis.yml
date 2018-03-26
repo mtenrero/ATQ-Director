@@ -1,0 +1,23 @@
+language: go
+
+services:
+  - docker
+
+go:
+  - tip
+  - master
+
+install:
+  - go get golang.org/x/tools/cmd/cover
+  - go get github.com/mattn/goveralls
+
+before_script:
+  - go get -t -d -v ./... 
+
+script:
+  - go test ./... -race -coverprofile=coverage.txt -covermode=atomic
+  - go build -v ./...
+  - $GOPATH/bin/goveralls -service=travis-ci
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
