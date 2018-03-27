@@ -1,4 +1,4 @@
-package dockerInterpreter
+package dockerMiddleware
 
 import (
 	"context"

@@ -1,8 +1,9 @@
 vendor
-vendor/*
+vendor/*s
 
 Gopkg.lock
 
 *.test
 
 coverage.txt
+debug

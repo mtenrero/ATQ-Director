@@ -1,4 +1,4 @@
-package dockerInterpreter
+package dockerMiddleware
 
 import "docker.io/go-docker/api/types/mount"
 
