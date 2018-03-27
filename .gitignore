@@ -5,5 +5,8 @@ Gopkg.lock
 
 *.test
 
+.vscode
+releases/
+
 coverage.txt
 debug
