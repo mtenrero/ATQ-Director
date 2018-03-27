@@ -51,3 +51,16 @@ func TestSwarmInspect(t *testing.T) {
 		client.SwarmLeave(context.Background(), false)
 	}
 }
+
+func ensureSwarm() {
+	memberBefore := IsSwarmNode()
+
+	client := getClient()
+
+	if !memberBefore {
+		client.SwarmInit(context.Background(), swarm.InitRequest{
+			ListenAddr: "0.0.0.0",
+		})
+
+	}
+}

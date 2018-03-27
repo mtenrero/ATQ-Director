@@ -15,3 +15,10 @@ func CreateService(serviceSpec swarm.ServiceSpec) (types.ServiceCreateResponse, 
 
 	return serviceCreateResponse, err
 }
+
+// RemoveService deletes the service specified
+func RemoveService(serviceID string) error {
+	client := getClient()
+
+	return client.ServiceRemove(context.Background(), serviceID)
+}
