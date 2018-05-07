@@ -1,5 +1,9 @@
 package design
 
+import (
+	. "github.com/goadesign/goa/design/apidsl"
+)
+
 var _ = Resource("swarm", func() {
 	Action("status", func() {
 		Routing(GET("/"))

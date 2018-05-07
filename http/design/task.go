@@ -1,28 +1,36 @@
 package design
 
+import (
+	. "github.com/goadesign/goa/design"
+	. "github.com/goadesign/goa/design/apidsl"
+)
+
 var _ = Resource("task", func() {
 	Action("create", func() {
 		Routing(PUT("/"))
 		Description("Creates a new Task in the Swarm according with the config provided in the JSON body")
-		Payload(Task)
+		Payload(TaskPayload)
 		Response("OK", func() {
 			Description("Task creation in progress")
 			Status(200)
-			Media(TaskCreation)
+			Media(Task)
 		})
 		Response("Definition error", func() {
 			Description("The Task definition has errors or it's not complete")
 			Status(417)
-			Media(TaskCreation)
+			Media(Task)
 		})
 	})
 	Action("inspect", func() {
 		Routing(GET("/:id"))
 		Description("Get Task's details")
+		Params(func() {
+			Param("id", UUID, "Task's UUID")
+		})
 		Response("OK", func() {
 			Description("Successful response containing Task data in JSON format")
 			Status(200)
-			Media(TaskCreation)
+			Media(Task)
 		})
 		Response("Task not identified", func() {
 			Description("The given ID doesn't not exist")
@@ -31,7 +39,7 @@ var _ = Resource("task", func() {
 		Response("Error Creating the Task", func() {
 			Description("Response when the Task has not been created correctly")
 			Status(500)
-			Media(TaskCreation)
+			Media(Task)
 		})
 	})
 	Action("delete", func() {
@@ -52,38 +60,41 @@ var _ = Resource("task", func() {
 	})
 })
 
-var TaskCreation = Type("TaskCreation", func() {
-	Description("Task Creation information")
+var TaskPayload = Type("TaskPayload", func() {
+	Attribute("master", ServicePayload)
+	Attribute("worker", ServicePayload)
+	Attribute("waitCommand", WaitCommand)
+	Attribute("delay", Integer, func() {
+		Minimum(0)
+	})
+})
+
+var Task = MediaType("application/atq.task+json", func() {
+	Description("Task description")
+	Reference(TaskPayload)
 	Attributes(func() {
-		Attribute("id", String, "Internal Task ATQ ID")
+		Attribute("id", UUID, "Task ID")
 		Attribute("status", func() {
-			Enum("creating", "waitingWorkers", "running", "finished", "errored")
+			Enum("initializing", "started", "stopped", "finished", "errored")
+			Description("Status of the Task")
 		})
-		Attribute("error", String, "Error message if errored")
-		Attribute("task", Task, "Task")
-	})
-})
 
-var Task = Type("Task", func() {
-	Description("Task definition")
-	Attributes(func() {
-		Attribute("type", func() {
-			Enum("masterworker")
-		})
-		Attribute("masterworker", MasterWorkerTask, "MasterWorker Task definition")
+		Attribute("master")
+		Attribute("worker")
+		Attribute("waitCommand")
+		Attribute("delay")
 	})
-})
-
-var MasterWorkerTask = Type("MasterWorkerTask", func() {
-	Description("Master/Workers Task definition")
-	Attribute("worker", func() {
-		Attribute("service", Service, "WorkerService definition")
-		Attribute("replicas", Integer, "Amount of workers to deploy in the Swarm cluster")
+	View("default", func() {
+		Attribute("id")
+		Attribute("status")
 	})
-	Attribute("master", func() {
-		Attribute("service", Service, "MasterService definition")
-		Attribute("delay", Integer, "Amount of seconds to wait until container creation")
-		Attribute("waitCommand", WaitCommand, "WaitCommand definition to be launched on the server before master container creation")
+	View("full", func() {
+		Attribute("id")
+		Attribute("status")
+		Attribute("master")
+		Attribute("worker")
+		Attribute("waitCommand")
+		Attribute("delay")
 	})
 })
 
