@@ -5,6 +5,7 @@ import (
 )
 
 var _ = Resource("swarm", func() {
+	BasePath("/swarm")
 	Action("status", func() {
 		Routing(GET("/"))
 		Description("Response with the details of the swarm")

@@ -1,0 +1,330 @@
+basePath: /api
+consumes:
+- application/json
+definitions:
+  AtqDatabindUpload:
+    description: User upload files response (default view)
+    example:
+      id: 46feb425-b8c5-4b89-9a45-8993e7fb5b47
+    properties:
+      id:
+        description: Upload ID
+        example: 46feb425-b8c5-4b89-9a45-8993e7fb5b47
+        format: uuid
+        type: string
+    title: 'Mediatype identifier: application/atq.databind.upload+json; view=default'
+    type: object
+  AtqDatabindUploadCollection:
+    description: AtqDatabindUploadCollection is the media type for an array of AtqDatabindUpload
+      (default view)
+    example:
+    - id: 46feb425-b8c5-4b89-9a45-8993e7fb5b47
+    - id: 46feb425-b8c5-4b89-9a45-8993e7fb5b47
+    items:
+      $ref: '#/definitions/AtqDatabindUpload'
+    title: 'Mediatype identifier: application/atq.databind.upload+json; type=collection;
+      view=default'
+    type: array
+  AtqDatabindUploadError:
+    description: User upload files response (error view)
+    example:
+      error: Voluptatibus exercitationem culpa.
+    properties:
+      error:
+        description: Error message if errored
+        example: Voluptatibus exercitationem culpa.
+        type: string
+    title: 'Mediatype identifier: application/atq.databind.upload+json; view=error'
+    type: object
+  AtqTask:
+    description: Task description (default view)
+    example:
+      id: aea50b75-0e8a-49e6-a0bd-9ef451ec1d45
+      status: started
+    properties:
+      id:
+        description: Task ID
+        example: aea50b75-0e8a-49e6-a0bd-9ef451ec1d45
+        format: uuid
+        type: string
+      status:
+        description: Status of the Task
+        enum:
+        - initializing
+        - started
+        - stopped
+        - finished
+        - errored
+        example: started
+        type: string
+    title: 'Mediatype identifier: application/atq.task+json; view=default'
+    type: object
+  ServicePayload:
+    example:
+      alias: ALIAS
+      args:
+      - Voluptatem vel.
+      fileid: da33f94e-b51c-4c0d-852b-483a217de142
+      image: hello-world
+      replicas: 6.083880635322279e+18
+      tty: true
+    properties:
+      alias:
+        description: Service alias, this will identify the Service
+        example: ALIAS
+        type: string
+      args:
+        description: Arguments to be passed to the container
+        example:
+        - Voluptatem vel.
+        items:
+          example: Voluptatem vel.
+          type: string
+        type: array
+      fileid:
+        description: ID of the Zipped contents that will be mounted and accesible
+          inside the container, PREVIOUSLY UPLOADED
+        example: da33f94e-b51c-4c0d-852b-483a217de142
+        format: uuid
+        type: string
+      image:
+        description: Docker base image to attach to Service
+        example: hello-world
+        type: string
+      replicas:
+        description: Amount of replicas to be deployed. (1 by default)
+        example: 6.083880635322279e+18
+        format: int64
+        type: integer
+      tty:
+        description: Interactive shell requirement
+        example: true
+        type: boolean
+    required:
+    - image
+    - alias
+    title: ServicePayload
+    type: object
+  TaskPayload:
+    example:
+      delay: 1
+      master:
+        alias: ALIAS
+        args:
+        - Voluptatem vel.
+        fileid: da33f94e-b51c-4c0d-852b-483a217de142
+        image: hello-world
+        replicas: 6.083880635322279e+18
+        tty: true
+      waitCommand:
+        command: Aut ea ipsa praesentium.
+        expectedResult: At aut numquam.
+        timeout: 1.630704420498289e+18
+      worker:
+        alias: ALIAS
+        args:
+        - Voluptatem vel.
+        fileid: da33f94e-b51c-4c0d-852b-483a217de142
+        image: hello-world
+        replicas: 6.083880635322279e+18
+        tty: true
+    properties:
+      delay:
+        example: 1
+        minimum: 0
+        type: integer
+      master:
+        $ref: '#/definitions/ServicePayload'
+      waitCommand:
+        $ref: '#/definitions/WaitCommand'
+      worker:
+        $ref: '#/definitions/ServicePayload'
+    title: TaskPayload
+    type: object
+  WaitCommand:
+    description: Definition of a command to be executed
+    example:
+      command: Aut ea ipsa praesentium.
+      expectedResult: At aut numquam.
+      timeout: 1.630704420498289e+18
+    properties:
+      command:
+        description: Command to be executed
+        example: Aut ea ipsa praesentium.
+        type: string
+      expectedResult:
+        description: Result expected
+        example: At aut numquam.
+        type: string
+      timeout:
+        description: Maximum seconds to wait until succesfull response
+        example: 1.630704420498289e+18
+        format: int64
+        type: integer
+    title: WaitCommand
+    type: object
+host: atq.mtenrero.com
+info:
+  description: REST Interface for Test queuing and orchestration
+  title: ATQ Test Orchestration Director
+  version: ""
+paths:
+  /databind/list:
+    get:
+      description: List of uploaded and available files
+      operationId: databind#list
+      produces:
+      - application/atq.databind.upload+json; type=collection
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/AtqDatabindUploadCollection'
+        "204":
+          description: No Content
+      schemes:
+      - http
+      summary: list databind
+      tags:
+      - databind
+  /databind/upload:
+    post:
+      description: Upload new zipped file for later usage with a Task
+      operationId: databind#upload
+      parameters:
+      - description: Zipped File
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/atq.databind.upload+json
+      responses:
+        "200":
+          description: The file was uploaded succesfully
+          schema:
+            $ref: '#/definitions/AtqDatabindUpload'
+        "415":
+          description: The file doesn't have a valid extension
+          schema:
+            $ref: '#/definitions/AtqDatabindUploadError'
+        "500":
+          description: Response when there are an error uploading the file
+          schema:
+            $ref: '#/definitions/AtqDatabindUploadError'
+      schemes:
+      - http
+      summary: upload databind
+      tags:
+      - databind
+  /monitoring/ping:
+    get:
+      description: Endpoint for pinging and healthcheck purposes
+      operationId: monitoring#ping
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Pong
+      schemes:
+      - http
+      summary: ping monitoring
+      tags:
+      - monitoring
+  /swarm/:
+    get:
+      description: Response with the details of the swarm
+      operationId: swarm#status
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Details of the Docker Swarm cluster
+      schemes:
+      - http
+      summary: status swarm
+      tags:
+      - swarm
+  /task/:
+    put:
+      description: Creates a new Task in the Swarm according with the config provided
+        in the JSON body
+      operationId: task#create
+      parameters:
+      - in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/TaskPayload'
+      produces:
+      - application/atq.task+json
+      responses:
+        "200":
+          description: Task creation in progress
+          schema:
+            $ref: '#/definitions/AtqTask'
+        "417":
+          description: The Task definition has errors or it's not complete
+          schema:
+            $ref: '#/definitions/AtqTask'
+      schemes:
+      - http
+      summary: create task
+      tags:
+      - task
+  /task/{id}:
+    delete:
+      description: Deletes the Task specified and its components
+      operationId: task#delete
+      parameters:
+      - in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Successfuly deleted
+        "404":
+          description: The given ID doesn't not exist
+        "500":
+          description: Docker Engine error deleting the Task generated container infrastructure
+      schemes:
+      - http
+      summary: delete task
+      tags:
+      - task
+    get:
+      description: Get Task's details
+      operationId: task#inspect
+      parameters:
+      - description: Task's UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/atq.task+json
+      responses:
+        "200":
+          description: Successful response containing Task data in JSON format
+          schema:
+            $ref: '#/definitions/AtqTask'
+        "404":
+          description: The given ID doesn't not exist
+        "500":
+          description: Response when the Task has not been created correctly
+          schema:
+            $ref: '#/definitions/AtqTask'
+      schemes:
+      - http
+      summary: inspect task
+      tags:
+      - task
+produces:
+- application/json
+responses:
+  NoContent:
+    description: No Content
+schemes:
+- http
+swagger: "2.0"

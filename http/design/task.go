@@ -6,6 +6,7 @@ import (
 )
 
 var _ = Resource("task", func() {
+	BasePath("/task")
 	Action("create", func() {
 		Routing(PUT("/"))
 		Description("Creates a new Task in the Swarm according with the config provided in the JSON body")
