@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
+// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
 // --version=v1.3.1
 
 package client
@@ -75,7 +75,7 @@ func (c *Client) DecodeAtqDatabindUploadErrorCollection(resp *http.Response) (At
 // Identifier: application/atq.task+json; view=default
 type AtqTask struct {
 	// Task ID
-	ID *uuid.UUID `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	// Status of the Task
 	Status *string `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
 }
@@ -96,7 +96,7 @@ func (mt *AtqTask) Validate() (err error) {
 type AtqTaskFull struct {
 	Delay *int `form:"delay,omitempty" json:"delay,omitempty" xml:"delay,omitempty"`
 	// Task ID
-	ID     *uuid.UUID      `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	ID     *string         `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	Master *ServicePayload `form:"master,omitempty" json:"master,omitempty" xml:"master,omitempty"`
 	// Status of the Task
 	Status      *string         `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`

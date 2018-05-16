@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
+// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
 // --version=v1.3.1
 
 package app
@@ -78,15 +78,8 @@ func MountDatabindController(service *goa.Service, ctrl DatabindController) {
 
 // unmarshalUploadDatabindPayload unmarshals the request body into the context request data Payload field.
 func unmarshalUploadDatabindPayload(ctx context.Context, service *goa.Service, req *http.Request) error {
-	var err error
-	var payload uploadPayload
-	_, rawFile, err2 := req.FormFile("file")
-	if err2 == nil {
-		payload.File = rawFile
-	} else {
-		err = goa.MergeErrors(err, goa.InvalidParamTypeError("file", "file", "file"))
-	}
-	if err != nil {
+	payload := &uploadPayload{}
+	if err := service.DecodeRequest(req, payload); err != nil {
 		return err
 	}
 	if err := payload.Validate(); err != nil {

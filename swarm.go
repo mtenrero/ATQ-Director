@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+
 	"github.com/goadesign/goa"
 	"github.com/mtenrero/ATQ-Director/app"
+	"github.com/mtenrero/ATQ-Director/dockerMiddleware"
 )
 
 // SwarmController implements the swarm resource.
@@ -17,10 +20,13 @@ func NewSwarmController(service *goa.Service) *SwarmController {
 
 // Status runs the status action.
 func (c *SwarmController) Status(ctx *app.StatusSwarmContext) error {
-	// SwarmController_Status: start_implement
+	inspect, err := dockerMiddleware.SwarmInspect()
+	if err != nil {
+		errr := err.Error()
+		return ctx.Status([]byte(errr))
+	}
 
-	// Put your logic here
+	inspectJSON, _ := json.Marshal(inspect)
 
-	return nil
-	// SwarmController_Status: end_implement
+	return ctx.Status([]byte(inspectJSON))
 }

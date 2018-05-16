@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
+// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
 // --version=v1.3.1
 
 package client
@@ -14,12 +14,8 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io"
-	"mime/multipart"
 	"net/http"
 	"net/url"
-	"os"
-	"path/filepath"
 )
 
 // ListDatabindPath computes a request path to the list action of databind.
@@ -69,24 +65,9 @@ func (c *Client) UploadDatabind(ctx context.Context, path string, payload *Uploa
 // NewUploadDatabindRequest create the request corresponding to the upload action endpoint of the databind resource.
 func (c *Client) NewUploadDatabindRequest(ctx context.Context, path string, payload *UploadPayload) (*http.Request, error) {
 	var body bytes.Buffer
-	w := multipart.NewWriter(&body)
-	{
-		_, file := filepath.Split(payload.File)
-		fw, err := w.CreateFormFile("file", file)
-		if err != nil {
-			return nil, err
-		}
-		fh, err := os.Open(payload.File)
-		if err != nil {
-			return nil, err
-		}
-		defer fh.Close()
-		if _, err := io.Copy(fw, fh); err != nil {
-			return nil, err
-		}
-	}
-	if err := w.Close(); err != nil {
-		return nil, err
+	err := c.Encoder.Encode(payload, &body, "*/*")
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode body: %s", err)
 	}
 	scheme := c.Scheme
 	if scheme == "" {
@@ -98,6 +79,6 @@ func (c *Client) NewUploadDatabindRequest(ctx context.Context, path string, payl
 		return nil, err
 	}
 	header := req.Header
-	header.Set("Content-Type", w.FormDataContentType())
+	header.Set("Content-Type", "application/json")
 	return req, nil
 }

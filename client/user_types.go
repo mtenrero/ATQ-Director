@@ -5,14 +5,13 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
+// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
 // --version=v1.3.1
 
 package client
 
 import (
 	"github.com/goadesign/goa"
-	uuid "github.com/goadesign/goa/uuid"
 )
 
 // servicePayload user type.
@@ -22,7 +21,7 @@ type servicePayload struct {
 	// Arguments to be passed to the container
 	Args []string `form:"args,omitempty" json:"args,omitempty" xml:"args,omitempty"`
 	// ID of the Zipped contents that will be mounted and accesible inside the container, PREVIOUSLY UPLOADED
-	Fileid *uuid.UUID `form:"fileid,omitempty" json:"fileid,omitempty" xml:"fileid,omitempty"`
+	Fileid *string `form:"fileid,omitempty" json:"fileid,omitempty" xml:"fileid,omitempty"`
 	// Docker base image to attach to Service
 	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
 	// Amount of replicas to be deployed. (1 by default)
@@ -73,7 +72,7 @@ type ServicePayload struct {
 	// Arguments to be passed to the container
 	Args []string `form:"args,omitempty" json:"args,omitempty" xml:"args,omitempty"`
 	// ID of the Zipped contents that will be mounted and accesible inside the container, PREVIOUSLY UPLOADED
-	Fileid *uuid.UUID `form:"fileid,omitempty" json:"fileid,omitempty" xml:"fileid,omitempty"`
+	Fileid *string `form:"fileid,omitempty" json:"fileid,omitempty" xml:"fileid,omitempty"`
 	// Docker base image to attach to Service
 	Image string `form:"image" json:"image" xml:"image"`
 	// Amount of replicas to be deployed. (1 by default)
@@ -170,7 +169,7 @@ func (ut *TaskPayload) Validate() (err error) {
 // uploadPayload user type.
 type uploadPayload struct {
 	// Zipped File
-	File *string `form:"file,omitempty" json:"file,omitempty" xml:"file,omitempty"`
+	File interface{} `form:"file,omitempty" json:"file,omitempty" xml:"file,omitempty"`
 }
 
 // Validate validates the uploadPayload type instance.
@@ -185,7 +184,7 @@ func (ut *uploadPayload) Validate() (err error) {
 func (ut *uploadPayload) Publicize() *UploadPayload {
 	var pub UploadPayload
 	if ut.File != nil {
-		pub.File = *ut.File
+		pub.File = ut.File
 	}
 	return &pub
 }
@@ -193,15 +192,7 @@ func (ut *uploadPayload) Publicize() *UploadPayload {
 // UploadPayload user type.
 type UploadPayload struct {
 	// Zipped File
-	File string `form:"file" json:"file" xml:"file"`
-}
-
-// Validate validates the UploadPayload type instance.
-func (ut *UploadPayload) Validate() (err error) {
-	if ut.File == "" {
-		err = goa.MergeErrors(err, goa.MissingAttributeError(`type`, "file"))
-	}
-	return
+	File interface{} `form:"file" json:"file" xml:"file"`
 }
 
 // Definition of a command to be executed
