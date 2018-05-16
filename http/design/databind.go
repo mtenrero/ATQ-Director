@@ -8,7 +8,6 @@ import (
 var _ = Resource("databind", func() {
 	BasePath("/databind")
 	Action("upload", func() {
-		MultipartForm()
 		Routing(POST("/upload"))
 		Description("Upload new zipped file for later usage with a Task")
 		Payload(UploadPayload)
@@ -38,7 +37,7 @@ var _ = Resource("databind", func() {
 })
 
 var UploadPayload = Type("UploadPayload", func() {
-	Attribute("file", File, "Zipped File")
+	Attribute("file", Any, "Zipped File")
 	Required("file")
 })
 

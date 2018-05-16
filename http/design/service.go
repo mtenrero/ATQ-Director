@@ -24,7 +24,7 @@ var ServicePayload = Type("ServicePayload", func() {
 		Description("Service alias, this will identify the Service")
 		Example(`ALIAS`)
 	})
-	Attribute("fileid", UUID, func() {
+	Attribute("fileid", String, func() {
 		Description("ID of the Zipped contents that will be mounted and accesible inside the container, PREVIOUSLY UPLOADED")
 	})
 	Required("image", "alias")

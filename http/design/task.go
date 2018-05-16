@@ -74,7 +74,7 @@ var Task = MediaType("application/atq.task+json", func() {
 	Description("Task description")
 	Reference(TaskPayload)
 	Attributes(func() {
-		Attribute("id", UUID, "Task ID")
+		Attribute("id", String, "Task ID")
 		Attribute("status", func() {
 			Enum("initializing", "started", "stopped", "finished", "errored")
 			Description("Status of the Task")
