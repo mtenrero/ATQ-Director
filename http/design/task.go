@@ -62,13 +62,18 @@ var _ = Resource("task", func() {
 })
 
 var TaskPayload = Type("TaskPayload", func() {
-	Attribute("name", String, "Task Name")
+	Attribute("name", String, func() {
+		Description("Task Name Identifier")
+		MinLength(3)
+		MaxLength(10)
+	})
 	Attribute("master", ServicePayload)
 	Attribute("worker", ServicePayload)
 	Attribute("waitCommand", WaitCommand)
 	Attribute("delay", Integer, func() {
 		Minimum(0)
 	})
+	Required("name", "worker", "master")
 })
 
 var Task = MediaType("application/atq.task+json", func() {
