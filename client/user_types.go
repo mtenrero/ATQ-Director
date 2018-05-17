@@ -94,8 +94,10 @@ func (ut *ServicePayload) Validate() (err error) {
 
 // taskPayload user type.
 type taskPayload struct {
-	Delay       *int            `form:"delay,omitempty" json:"delay,omitempty" xml:"delay,omitempty"`
-	Master      *servicePayload `form:"master,omitempty" json:"master,omitempty" xml:"master,omitempty"`
+	Delay  *int            `form:"delay,omitempty" json:"delay,omitempty" xml:"delay,omitempty"`
+	Master *servicePayload `form:"master,omitempty" json:"master,omitempty" xml:"master,omitempty"`
+	// Task Name
+	Name        *string         `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	WaitCommand *waitCommand    `form:"waitCommand,omitempty" json:"waitCommand,omitempty" xml:"waitCommand,omitempty"`
 	Worker      *servicePayload `form:"worker,omitempty" json:"worker,omitempty" xml:"worker,omitempty"`
 }
@@ -129,6 +131,9 @@ func (ut *taskPayload) Publicize() *TaskPayload {
 	if ut.Master != nil {
 		pub.Master = ut.Master.Publicize()
 	}
+	if ut.Name != nil {
+		pub.Name = ut.Name
+	}
 	if ut.WaitCommand != nil {
 		pub.WaitCommand = ut.WaitCommand.Publicize()
 	}
@@ -140,8 +145,10 @@ func (ut *taskPayload) Publicize() *TaskPayload {
 
 // TaskPayload user type.
 type TaskPayload struct {
-	Delay       *int            `form:"delay,omitempty" json:"delay,omitempty" xml:"delay,omitempty"`
-	Master      *ServicePayload `form:"master,omitempty" json:"master,omitempty" xml:"master,omitempty"`
+	Delay  *int            `form:"delay,omitempty" json:"delay,omitempty" xml:"delay,omitempty"`
+	Master *ServicePayload `form:"master,omitempty" json:"master,omitempty" xml:"master,omitempty"`
+	// Task Name
+	Name        *string         `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
 	WaitCommand *WaitCommand    `form:"waitCommand,omitempty" json:"waitCommand,omitempty" xml:"waitCommand,omitempty"`
 	Worker      *ServicePayload `form:"worker,omitempty" json:"worker,omitempty" xml:"worker,omitempty"`
 }

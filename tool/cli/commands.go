@@ -99,6 +99,7 @@ Payload example:
       "replicas": 1630704420498288887,
       "tty": true
    },
+   "name": "Nemo qui in.",
    "waitCommand": {
       "command": "Sit sed.",
       "expectedResult": "Perferendis voluptas doloremque iure.",

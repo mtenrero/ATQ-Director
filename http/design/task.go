@@ -62,6 +62,7 @@ var _ = Resource("task", func() {
 })
 
 var TaskPayload = Type("TaskPayload", func() {
+	Attribute("name", String, "Task Name")
 	Attribute("master", ServicePayload)
 	Attribute("worker", ServicePayload)
 	Attribute("waitCommand", WaitCommand)

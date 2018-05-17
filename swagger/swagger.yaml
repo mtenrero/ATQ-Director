@@ -5,11 +5,11 @@ definitions:
   AtqDatabindUpload:
     description: User upload files response (default view)
     example:
-      id: 85e7497d-9b36-4356-bbda-a77225a6953d
+      id: c996b504-6476-4681-b366-0650841bfa51
     properties:
       id:
         description: Upload ID
-        example: 85e7497d-9b36-4356-bbda-a77225a6953d
+        example: c996b504-6476-4681-b366-0650841bfa51
         format: uuid
         type: string
     title: 'Mediatype identifier: application/atq.databind.upload+json; view=default'
@@ -18,7 +18,7 @@ definitions:
     description: AtqDatabindUploadCollection is the media type for an array of AtqDatabindUpload
       (default view)
     example:
-    - id: 85e7497d-9b36-4356-bbda-a77225a6953d
+    - id: c996b504-6476-4681-b366-0650841bfa51
     items:
       $ref: '#/definitions/AtqDatabindUpload'
     title: 'Mediatype identifier: application/atq.databind.upload+json; type=collection;
@@ -116,6 +116,7 @@ definitions:
         image: hello-world
         replicas: 1.630704420498289e+18
         tty: true
+      name: Nemo qui in.
       waitCommand:
         command: Sit sed.
         expectedResult: Perferendis voluptas doloremque iure.
@@ -136,6 +137,10 @@ definitions:
         type: integer
       master:
         $ref: '#/definitions/ServicePayload'
+      name:
+        description: Task Name
+        example: Nemo qui in.
+        type: string
       waitCommand:
         $ref: '#/definitions/WaitCommand'
       worker:
