@@ -1,50 +1,19 @@
-# Automation Test Queue (ATQ)
+# Automation Test Queue (ATQ): Director
 
-[![Build Status](https://api.travis-ci.org/mtenrero/AutomationTestQueue.svg)](https://travis-ci.org/mtenrero/AutomationTestQueue)
-[![Coverage Status](https://coveralls.io/repos/github/mtenrero/AutomationTestQueue/badge.svg)](https://coveralls.io/github/mtenrero/AutomationTestQueue)
-[![API Documentation](https://img.shields.io/badge/API-Documentation-orange.svg)](https://mtenrero.github.io/AutomationTestQueue/)
+[![Build Status](https://api.travis-ci.org/mtenrero/ATQ-Director.svg)](https://travis-ci.org/mtenrero/ATQ-Director)
+[![Coverage Status](https://coveralls.io/repos/github/mtenrero/ATQ-Director/badge.svg)](https://coveralls.io/github/mtenrero/ATQ-Director)
+[![API Documentation](https://img.shields.io/badge/API-Documentation-orange.svg)](https://mtenrero.github.io/ATQ-Director/)
 
-ATQ is an HTTP API designed to launch tests over remote machines.
-It's designed to be integrated in containers or pods with other services.
+Automation Test Queue is a server-side binary which exposes a HTTP API and communicates with the Docker subsystem.
 
-ATQ exposes an API you can call and give orders to the services you had configured previously,
-like upload test files to the container/machine and run them with another API call with the
-predefined tool in a config file.
+It's designed to work alongside a Docker Swarm cluster creating a short-lived distributed services on demand in the cluster with their own virtual network.
 
-![Architecture](https://github.com/mtenrero/AutomationTestQueue/raw/master/readmeFiles/ATQ_arch.png)
+This ease the testing stage in CI/CD scenarios, allowing to run tests in a public/private/hybrid cloud without taking care of the infrastructure. The only configuration needed is an already working Docker Swarm and desired Docker Images. 
 
-This simplifies the file handling in already started containers giving an abstraction layer to the
-developer avoiding to handle TTY/SCP/SSH/Socket connections to the container using the Docker interface.
+It's developed in Golang and cross-compiled, so it's compatible natively with al OSes (Linux, OSX and Windows) and works with both container types: Windows & Linux with minimum host resource consumption.
 
-## Launching Modes
 
-ATQ can be launched in different modes:
-
-### Controller
-
-Controller is the mode which will be used to coordinate all the containers and its statuses. 
-
-It exposes an API where the registrator component configured in the containers will call to in order to register all the instances.
-
-```bash
-./atq -mode=controller
-```
-
-### Registrator
-
-Registrator is the component which should be added at the container image startup in order to register and communicate to the Controller.
-
-```bash
-./atq -mode=registrator
-```
-
-In order to work, this mode requires an environment variable **ATQCONTROLLER_ENDPOINT** specifying the endpoint and port where the Controller is running.
-
-The environment variable can be global, local or specified at the program startup: 
-
-```bash
-env ATQCONTROLLER_ENDPOINT=http://localhost:8080 ./atq -mode=registrator
-```
+![Architecture](./readme/ATQ-arch.png)
 
 ## Versioning
 
@@ -56,80 +25,47 @@ And the following versions will be `https:\\host:port\v2...`
 
 ## Configuration
 
-ATQ need some previous configuration in order to work properly, like adding the desired tools in a config file. 
+You can specify which images are available to use with ATQ for security reasons with a YAML configuration file with the following structure:
 
-### **Tools**
+```yaml
+port: 9050
+images:
+  - imageName: mtenrero/jmeter
+    args:
+      - name: MODE
+        required: true
+      - name: TEST_NAME
+        required: false
+      - name: REMOTES
+        required: false
+``` 
 
-The tools you want to make available to use thorugh the HTTP API must be specified in the file **tools.yml** and must be in the root path of the ATQ launcher. You can check up the example files available in this repository.
+All images specified in this file will be pulled from the registries to make them available instantly when requested, so starting time may be increased in the first launch.
+
+### **Images**
+
+Images contain a list with the enabled images available to use with ATQ-Director
 
 Available fields:
 
-* **Alias**: Public alias exposed in the API. **Unique & Required**
-* **Name**: Tool's detailed name. **Required**
-* **Path**: **Full** path to the tool in the system. Relative paths may not work in certain systems. **Required**
-    If your tool requires some args, you should put the name of the Env in uppercase characters before a **$**(USD) symbol.
-    If the tool requires a **File** in the arguments, you can put the **$FILE** identifier.
-* **Envs**: Environment variables required to launch the tool. **Optional**
-    Environment variables can be converted to program arguments specifying the declared environment variable name in the path after a USD symbol
-
-    NOTE: Check the tools.yml and tools_test.yml files for examples.
+* **imageName**: Docker Image identifier (Docker Hub / Private Registry)
+* **Args**: Available arguments
 
 ## API
 
-### **GET** /v1/tools
+In order to maintain an up-to-date API documentation, please, check the Swagger API generated docs available inside the **swagger** folder in this repository
 
-This request doesn't need any parameters
+## How to use this repository
 
-* **200** Returns the available tools in the server in JSON format:
+I've used **dep** for vendor handling. So make sure tu do a `dep ensure` before start to code.
 
-```json
-{
-    "tools": [
-        {
-            "Alias": "JMX_MOD",
-            "Name": "Apache Jmeter Test",
-            "Envs": [
-                "file",
-                "mode",
-                "remotes"
-            ]
-        },
-        {
-            "Alias": "ECHO",
-            "Name": "Echo Tool",
-            "Envs": [
-                "message"
-            ]
-        }
-    ]
-}
-```
+### Goa Design
 
-* **204** There isn't any tool available. You must configure the tool.yml before launch ATQ!.
+HTTP API were designed at the beggining of the project. Goa Design Framework was used to define the API, it has its own DSL and its available in the _http/design_ package.
 
-### **GET** /v1/test
+After a design modification it's neccesary to run the script `./regenerateGoa.ps1` or `./regenerateGoa.sh` (depending OS) in order to regenerate all files taking care of the _vendoring_ directory, which causes issues with _goagen_
 
-Returns the uploaded tests available to launch in the server. May not include any request parameter
-
-* **204** There are not any test in the server yet.
-* **200** Returns a JSON structure with the uploaded tests to the server.
-
-### **POST** /v1/uploadTest (Multipart)
-
-Send a file to the server.
-**Requires at least two parameters:**
-
-* **name**: Test Name
-* **toolAlias**: Required tool wich will be launched with. Must be declared in the ***config.yml*** file.
-
-**Optional:**
-
-* **envs**: Environment variables required to launch the test.
-
-### **POST** /v1/test
-
-Run the test with the specified tool
-**CURRENTLY IN DEVELOPMENT**
+If needed, check goa documentation: [https://goa.design](https://goa.design)
 
 ## Testing & Good practices
 
