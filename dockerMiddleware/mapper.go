@@ -11,7 +11,7 @@ import (
 func ContainerSpecMapper(serviceImage *atqTypes.ServiceImage, alias string, mounts []mount.Mount) *swarm.ContainerSpec {
 
 	aliasMap := make(map[string]string)
-	aliasMap["atq_alias"] = "alias"
+	aliasMap["atq_alias"] = alias
 
 	spec := swarm.ContainerSpec{
 		Image:  serviceImage.ImageName,
@@ -63,13 +63,13 @@ func CreateNetworkMap(alias string) (*swarm.NetworkAttachmentConfig, error) {
 }
 
 // ComposeService Maps the values to a new service
-func ComposeService(serviceImage *atqTypes.ServiceImage, alias, path string) (*types.ServiceCreateResponse, error) {
+func ComposeService(serviceImage *atqTypes.ServiceImage, globalAlias, alias, path string, mode *swarm.ServiceMode) (*types.ServiceCreateResponse, error) {
 
 	mounts := CreateMounts(path, alias)
 
 	containerSpec := ContainerSpecMapper(serviceImage, alias, mounts)
 
-	networkSpec, netError := CreateNetworkMap(alias)
+	networkSpec, netError := CreateNetworkMap(globalAlias)
 
 	if netError != nil {
 		return nil, netError
@@ -84,6 +84,7 @@ func ComposeService(serviceImage *atqTypes.ServiceImage, alias, path string) (*t
 	serviceSpec := swarm.ServiceSpec{
 		Annotations:  annotations,
 		TaskTemplate: *task,
+		Mode:         *mode,
 	}
 
 	service, serviceErr := CreateService(serviceSpec)

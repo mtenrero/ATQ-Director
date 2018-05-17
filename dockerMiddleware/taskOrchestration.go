@@ -2,17 +2,37 @@ package dockerMiddleware
 
 import (
 	"github.com/mtenrero/ATQ-Director/app"
+	"github.com/mtenrero/ATQ-Director/types"
 )
 
 // TaskMasterWorker initializes a new Master/Worker Task Type
-func TaskMasterWorker(task *app.TaskPayload) {
-	InitWorkerServices(task.Worker)
+func TaskMasterWorker(task *app.TaskPayload) (*app.AtqTask, error) {
+	worker, err := InitWorkerService(task.Name, task.Worker)
+
+	return worker, err
 }
 
-// InitWorkerServices initializes the Worker Service and attach them to a random generated Network
-func InitWorkerServices(worker *app.ServicePayload) (*[]app.ServicePayload, error) {
+// InitWorkerService initializes the Worker Service and attach them to a random generated Network
+func InitWorkerService(globalAlias string, worker *app.ServicePayload) (*app.AtqTask, error) {
 
-	return nil, nil
+	var workerBaseAlias = globalAlias + "_" + worker.Alias
+
+	serviceImage := types.ServiceImage{
+		ImageName: worker.Image,
+		TTY:       *worker.Tty,
+	}
+
+	serviceCreateResponse, err := ComposeService(&serviceImage, globalAlias, workerBaseAlias, "", replicatedService(*worker.Replicas))
+
+	if err != nil {
+		return nil, err
+	}
+
+	taskResponse := app.AtqTask{
+		ID: &serviceCreateResponse.ID,
+	}
+
+	return &taskResponse, nil
 }
 
 // InitMasterService initializes the Master Service and attach it to the given Network name

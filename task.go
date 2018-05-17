@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/goadesign/goa"
 	"github.com/mtenrero/ATQ-Director/app"
+	"github.com/mtenrero/ATQ-Director/dockerMiddleware"
 )
 
 // TaskController implements the task resource.
@@ -17,12 +18,16 @@ func NewTaskController(service *goa.Service) *TaskController {
 
 // Create runs the create action.
 func (c *TaskController) Create(ctx *app.CreateTaskContext) error {
-	// TaskController_Create: start_implement
+	task, err := dockerMiddleware.TaskMasterWorker(ctx.Payload)
+	if err != nil {
+		errr := err.Error()
+		errorResponse := app.AtqTask{
+			Status: &errr,
+		}
+		return ctx.DefinitionError(&errorResponse)
+	}
 
-	// Put your logic here
-
-	res := &app.AtqTask{}
-	return ctx.OK(res)
+	return ctx.OK(task)
 	// TaskController_Create: end_implement
 }
 

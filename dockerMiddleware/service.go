@@ -22,3 +22,18 @@ func RemoveService(serviceID string) error {
 
 	return client.ServiceRemove(context.Background(), serviceID)
 }
+
+// replicatedService returns a Service Mode configurated with the given replicas amount
+func replicatedService(replicas int) *swarm.ServiceMode {
+	ureplicas := uint64(replicas)
+	replicatedService := swarm.ReplicatedService{
+		Replicas: &ureplicas,
+	}
+
+	serviceMode := swarm.ServiceMode{
+		Replicated: &replicatedService,
+		Global:     nil,
+	}
+
+	return &serviceMode
+}
