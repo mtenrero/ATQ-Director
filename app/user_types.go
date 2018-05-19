@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package app
@@ -14,6 +14,30 @@ import (
 	"github.com/goadesign/goa"
 	"unicode/utf8"
 )
+
+// Docker Swarm Join Tokens
+type joinTokens struct {
+	Manager *string `form:"manager,omitempty" json:"manager,omitempty" xml:"manager,omitempty"`
+	Worker  *string `form:"worker,omitempty" json:"worker,omitempty" xml:"worker,omitempty"`
+}
+
+// Publicize creates JoinTokens from joinTokens
+func (ut *joinTokens) Publicize() *JoinTokens {
+	var pub JoinTokens
+	if ut.Manager != nil {
+		pub.Manager = ut.Manager
+	}
+	if ut.Worker != nil {
+		pub.Worker = ut.Worker
+	}
+	return &pub
+}
+
+// Docker Swarm Join Tokens
+type JoinTokens struct {
+	Manager *string `form:"manager,omitempty" json:"manager,omitempty" xml:"manager,omitempty"`
+	Worker  *string `form:"worker,omitempty" json:"worker,omitempty" xml:"worker,omitempty"`
+}
 
 // servicePayload user type.
 type servicePayload struct {

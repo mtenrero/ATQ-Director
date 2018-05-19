@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package client
@@ -68,6 +68,35 @@ func (c *Client) DecodeAtqDatabindUploadErrorCollection(resp *http.Response) (At
 	var decoded AtqDatabindUploadErrorCollection
 	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
 	return decoded, err
+}
+
+// Swarm Details (default view)
+//
+// Identifier: application/atq.swarm+json; view=default
+type AtqSwarm struct {
+	JoinTokens *JoinTokens `form:"joinTokens,omitempty" json:"joinTokens,omitempty" xml:"joinTokens,omitempty"`
+}
+
+// Swarm Details (error view)
+//
+// Identifier: application/atq.swarm+json; view=error
+type AtqSwarmError struct {
+	// Swarm Error Message
+	Error *string `form:"error,omitempty" json:"error,omitempty" xml:"error,omitempty"`
+}
+
+// DecodeAtqSwarm decodes the AtqSwarm instance encoded in resp body.
+func (c *Client) DecodeAtqSwarm(resp *http.Response) (*AtqSwarm, error) {
+	var decoded AtqSwarm
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
+}
+
+// DecodeAtqSwarmError decodes the AtqSwarmError instance encoded in resp body.
+func (c *Client) DecodeAtqSwarmError(resp *http.Response) (*AtqSwarmError, error) {
+	var decoded AtqSwarmError
+	err := c.Decoder.Decode(&decoded, resp.Body, resp.Header.Get("Content-Type"))
+	return &decoded, err
 }
 
 // Task description (default view)

@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package cli
@@ -87,33 +87,33 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 Payload example:
 
 {
-   "delay": 0,
+   "delay": 1,
    "master": {
       "alias": "ALIAS",
       "args": [
-         "Aut ea ipsa praesentium.",
-         "Aut ea ipsa praesentium."
+         "Quia aut omnis ut nemo qui in.",
+         "Quia aut omnis ut nemo qui in."
       ],
-      "fileid": "At aut numquam.",
+      "fileid": "Repellendus aut.",
       "image": "hello-world",
-      "replicas": 1630704420498288887,
+      "replicas": 7215529505515558647,
       "tty": true
    },
-   "name": "o1zxg",
+   "name": "na3",
    "waitCommand": {
-      "command": "Sit sed.",
-      "expectedResult": "Perferendis voluptas doloremque iure.",
-      "timeout": 729931236802093912
+      "command": "Officiis veritatis libero maxime et.",
+      "expectedResult": "Distinctio recusandae cum atque quo reiciendis.",
+      "timeout": 6363292654853665191
    },
    "worker": {
       "alias": "ALIAS",
       "args": [
-         "Aut ea ipsa praesentium.",
-         "Aut ea ipsa praesentium."
+         "Quia aut omnis ut nemo qui in.",
+         "Quia aut omnis ut nemo qui in."
       ],
-      "fileid": "At aut numquam.",
+      "fileid": "Repellendus aut.",
       "image": "hello-world",
-      "replicas": 1630704420498288887,
+      "replicas": 7215529505515558647,
       "tty": true
    }
 }`,
@@ -206,7 +206,7 @@ Payload example:
 Payload example:
 
 {
-   "file": "1975-05-18T17:13:34Z"
+   "file": "109fec02-1592-4a6a-bafc-d63737da0a91"
 }`,
 		RunE: func(cmd *cobra.Command, args []string) error { return tmp7.Run(c, args) },
 	}

@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package app
@@ -164,14 +164,28 @@ func NewStatusSwarmContext(ctx context.Context, r *http.Request, service *goa.Se
 	return &rctx, err
 }
 
-// Status sends a HTTP response with status code 200.
-func (ctx *StatusSwarmContext) Status(resp []byte) error {
+// OK sends a HTTP response with status code 200.
+func (ctx *StatusSwarmContext) OK(r *AtqSwarm) error {
 	if ctx.ResponseData.Header().Get("Content-Type") == "" {
-		ctx.ResponseData.Header().Set("Content-Type", "text/plain")
+		ctx.ResponseData.Header().Set("Content-Type", "application/atq.swarm+json")
 	}
-	ctx.ResponseData.WriteHeader(200)
-	_, err := ctx.ResponseData.Write(resp)
-	return err
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// OKError sends a HTTP response with status code 200.
+func (ctx *StatusSwarmContext) OKError(r *AtqSwarmError) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/atq.swarm+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 200, r)
+}
+
+// SwarmErrorError sends a HTTP response with status code 503.
+func (ctx *StatusSwarmContext) SwarmErrorError(r *AtqSwarmError) error {
+	if ctx.ResponseData.Header().Get("Content-Type") == "" {
+		ctx.ResponseData.Header().Set("Content-Type", "application/atq.swarm+json")
+	}
+	return ctx.ResponseData.Service.Send(ctx.Context, 503, r)
 }
 
 // CreateTaskContext provides the task create action context.

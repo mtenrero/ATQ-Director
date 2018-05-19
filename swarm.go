@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-
 	"github.com/goadesign/goa"
 	"github.com/mtenrero/ATQ-Director/app"
 	"github.com/mtenrero/ATQ-Director/dockerMiddleware"
@@ -21,12 +19,22 @@ func NewSwarmController(service *goa.Service) *SwarmController {
 // Status runs the status action.
 func (c *SwarmController) Status(ctx *app.StatusSwarmContext) error {
 	inspect, err := dockerMiddleware.SwarmInspect()
+
 	if err != nil {
 		errr := err.Error()
-		return ctx.Status([]byte(errr))
+		swarmError := app.AtqSwarmError{
+			Error: &errr,
+		}
+
+		return ctx.SwarmErrorError(&swarmError)
 	}
 
-	inspectJSON, _ := json.Marshal(inspect)
+	swarm := &app.AtqSwarm{
+		JoinTokens: &app.JoinTokens{
+			Manager: &inspect.JoinTokens.Manager,
+			Worker:  &inspect.JoinTokens.Worker,
+		},
+	}
 
-	return ctx.Status([]byte(inspectJSON))
+	return ctx.OK(swarm)
 }
