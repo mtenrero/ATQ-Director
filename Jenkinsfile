@@ -5,6 +5,8 @@ pipeline {
     stages {
         stage('Prepare Environment') {
             steps {
+                sh 'mkdir -p $GOPATH/src/github.com/mtenrero/ATQ-Director'
+                sh 'ln -s $WORKSPACE $GOPATH/src/github.com/mtenrero/ATQ-Director'
                 sh 'go get golang.org/x/tools/cmd/cover'
                 sh 'go get github.com/mattn/goveralls'
             }
