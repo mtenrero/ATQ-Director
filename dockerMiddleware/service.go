@@ -37,3 +37,17 @@ func replicatedService(replicas int) *swarm.ServiceMode {
 
 	return &serviceMode
 }
+
+// ServiceVIPS return the list of containers Virtual IPs of the given Service
+func ServiceVIPS(serviceID string) (*[]swarm.EndpointVirtualIP, error) {
+	client := getClient()
+
+	service, _, err := client.ServiceInspectWithRaw(context.Background(), serviceID, types.ServiceInspectOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	vips := service.Endpoint.VirtualIPs
+
+	return &vips, err
+}

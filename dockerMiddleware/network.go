@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"docker.io/go-docker/api/types"
+	"docker.io/go-docker/api/types/network"
 )
 
 // CreateOverlayNetwork creates a new Overlay Network in the Swarm
@@ -40,4 +41,18 @@ func overlayNetworkSpec(id string) types.NetworkCreate {
 		Scope:  "swarm",
 		Labels: labels,
 	}
+}
+
+// NetworkContainerPeers returns a list containing all Containers using the network and its Virtual IP
+func NetworkContainerPeers(networkID string) (*[]network.PeerInfo, error) {
+
+	client := getClient()
+
+	network, err := client.NetworkInspect(context.Background(), networkID, types.NetworkInspectOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	var peers = network.Peers
+	return &peers, nil
 }
