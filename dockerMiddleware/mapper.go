@@ -34,17 +34,21 @@ func TaskSpecMapper(containerSpec *swarm.ContainerSpec, networkAttachConfig []sw
 }
 
 // CreateMounts configures the mounts given an alias and a path
-func CreateMounts(path, alias string) []mount.Mount {
-
+func CreateMounts(path *string, alias string) []mount.Mount {
 	var mounts []mount.Mount
 
-	mount := mount.Mount{
-		Type:   "bind",
-		Source: path,
-		Target: "/atq/data",
+	if path != nil {
+
+		mount := mount.Mount{
+			Type:   "bind",
+			Source: *path,
+			Target: "/atq/data",
+		}
+
+		return append(mounts, mount)
 	}
 
-	return append(mounts, mount)
+	return nil
 }
 
 // CreateNetworkMap creates a new specific network for the service
@@ -63,7 +67,7 @@ func CreateNetworkMap(alias string) (*swarm.NetworkAttachmentConfig, error) {
 }
 
 // ComposeService Maps the values to a new service
-func ComposeService(serviceImage *atqTypes.ServiceImage, globalAlias, alias, path string, mode *swarm.ServiceMode) (*types.ServiceCreateResponse, error) {
+func ComposeService(serviceImage *atqTypes.ServiceImage, globalAlias, alias string, path *string, mode *swarm.ServiceMode) (*types.ServiceCreateResponse, error) {
 
 	mounts := CreateMounts(path, alias)
 
