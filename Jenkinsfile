@@ -23,8 +23,8 @@ pipeline {
         }
 
         stage('Build') {
-            steps {
-                sh 'go build -v ./...'
+            steps {
+                sh './build.sh'
             }
         }
     }
