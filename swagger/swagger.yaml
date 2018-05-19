@@ -5,11 +5,11 @@ definitions:
   AtqDatabindUpload:
     description: User upload files response (default view)
     example:
-      id: e1723062-2cea-404b-b9f8-7c33f971824b
+      id: 3f2df4ef-56d3-44d6-b88d-8e5ee06fe954
     properties:
       id:
         description: Upload ID
-        example: e1723062-2cea-404b-b9f8-7c33f971824b
+        example: 3f2df4ef-56d3-44d6-b88d-8e5ee06fe954
         format: uuid
         type: string
     title: 'Mediatype identifier: application/atq.databind.upload+json; view=default'
@@ -18,8 +18,7 @@ definitions:
     description: AtqDatabindUploadCollection is the media type for an array of AtqDatabindUpload
       (default view)
     example:
-    - id: e1723062-2cea-404b-b9f8-7c33f971824b
-    - id: e1723062-2cea-404b-b9f8-7c33f971824b
+    - id: 3f2df4ef-56d3-44d6-b88d-8e5ee06fe954
     items:
       $ref: '#/definitions/AtqDatabindUpload'
     title: 'Mediatype identifier: application/atq.databind.upload+json; type=collection;
@@ -36,15 +35,37 @@ definitions:
         type: string
     title: 'Mediatype identifier: application/atq.databind.upload+json; view=error'
     type: object
+  AtqSwarm:
+    description: Swarm Details (default view)
+    example:
+      joinTokens:
+        manager: Aut ea ipsa praesentium.
+        worker: At aut numquam.
+    properties:
+      joinTokens:
+        $ref: '#/definitions/JoinTokens'
+    title: 'Mediatype identifier: application/atq.swarm+json; view=default'
+    type: object
+  AtqSwarmError:
+    description: Swarm Details (error view)
+    example:
+      error: Magni eaque voluptatem vel dolorum sequi.
+    properties:
+      error:
+        description: Swarm Error Message
+        example: Magni eaque voluptatem vel dolorum sequi.
+        type: string
+    title: 'Mediatype identifier: application/atq.swarm+json; view=error'
+    type: object
   AtqTask:
     description: Task description (default view)
     example:
-      id: Eaque voluptatem vel dolorum.
-      status: finished
+      id: Qui sit sed quas perferendis voluptas doloremque.
+      status: stopped
     properties:
       id:
         description: Task ID
-        example: Eaque voluptatem vel dolorum.
+        example: Qui sit sed quas perferendis voluptas doloremque.
         type: string
       status:
         description: Status of the Task
@@ -54,19 +75,33 @@ definitions:
         - stopped
         - finished
         - errored
-        example: finished
+        example: stopped
         type: string
     title: 'Mediatype identifier: application/atq.task+json; view=default'
+    type: object
+  JoinTokens:
+    description: Docker Swarm Join Tokens
+    example:
+      manager: Aut ea ipsa praesentium.
+      worker: At aut numquam.
+    properties:
+      manager:
+        example: Aut ea ipsa praesentium.
+        type: string
+      worker:
+        example: At aut numquam.
+        type: string
+    title: JoinTokens
     type: object
   ServicePayload:
     example:
       alias: ALIAS
       args:
-      - Aut ea ipsa praesentium.
-      - Aut ea ipsa praesentium.
-      fileid: At aut numquam.
+      - Quia aut omnis ut nemo qui in.
+      - Quia aut omnis ut nemo qui in.
+      fileid: Repellendus aut.
       image: hello-world
-      replicas: 1.630704420498289e+18
+      replicas: 7.215529505515559e+18
       tty: true
     properties:
       alias:
@@ -76,16 +111,16 @@ definitions:
       args:
         description: Arguments to be passed to the container
         example:
-        - Aut ea ipsa praesentium.
-        - Aut ea ipsa praesentium.
+        - Quia aut omnis ut nemo qui in.
+        - Quia aut omnis ut nemo qui in.
         items:
-          example: Aut ea ipsa praesentium.
+          example: Quia aut omnis ut nemo qui in.
           type: string
         type: array
       fileid:
         description: ID of the Zipped contents that will be mounted and accesible
           inside the container, PREVIOUSLY UPLOADED
-        example: At aut numquam.
+        example: Repellendus aut.
         type: string
       image:
         description: Docker base image to attach to Service
@@ -93,7 +128,7 @@ definitions:
         type: string
       replicas:
         description: Amount of replicas to be deployed. (1 by default)
-        example: 1.630704420498289e+18
+        example: 7.215529505515559e+18
         format: int64
         type: integer
       tty:
@@ -107,40 +142,40 @@ definitions:
     type: object
   TaskPayload:
     example:
-      delay: 0
+      delay: 1
       master:
         alias: ALIAS
         args:
-        - Aut ea ipsa praesentium.
-        - Aut ea ipsa praesentium.
-        fileid: At aut numquam.
+        - Quia aut omnis ut nemo qui in.
+        - Quia aut omnis ut nemo qui in.
+        fileid: Repellendus aut.
         image: hello-world
-        replicas: 1.630704420498289e+18
+        replicas: 7.215529505515559e+18
         tty: true
-      name: o1zxg
+      name: na3
       waitCommand:
-        command: Sit sed.
-        expectedResult: Perferendis voluptas doloremque iure.
-        timeout: 7.29931236802094e+17
+        command: Officiis veritatis libero maxime et.
+        expectedResult: Distinctio recusandae cum atque quo reiciendis.
+        timeout: 6.363292654853665e+18
       worker:
         alias: ALIAS
         args:
-        - Aut ea ipsa praesentium.
-        - Aut ea ipsa praesentium.
-        fileid: At aut numquam.
+        - Quia aut omnis ut nemo qui in.
+        - Quia aut omnis ut nemo qui in.
+        fileid: Repellendus aut.
         image: hello-world
-        replicas: 1.630704420498289e+18
+        replicas: 7.215529505515559e+18
         tty: true
     properties:
       delay:
-        example: 0
+        example: 1
         minimum: 0
         type: integer
       master:
         $ref: '#/definitions/ServicePayload'
       name:
         description: Task Name Identifier
-        example: o1zxg
+        example: na3
         maxLength: 10
         minLength: 3
         type: string
@@ -156,11 +191,11 @@ definitions:
     type: object
   UploadPayload:
     example:
-      file: "1975-05-18T17:13:34Z"
+      file: aa8da4ea-12be-48b8-8660-0ff0d0abc118
     properties:
       file:
         description: Zipped File
-        example: "1975-05-18T17:13:34Z"
+        example: aa8da4ea-12be-48b8-8660-0ff0d0abc118
     required:
     - file
     title: UploadPayload
@@ -168,21 +203,21 @@ definitions:
   WaitCommand:
     description: Definition of a command to be executed
     example:
-      command: Sit sed.
-      expectedResult: Perferendis voluptas doloremque iure.
-      timeout: 7.29931236802094e+17
+      command: Officiis veritatis libero maxime et.
+      expectedResult: Distinctio recusandae cum atque quo reiciendis.
+      timeout: 6.363292654853665e+18
     properties:
       command:
         description: Command to be executed
-        example: Sit sed.
+        example: Officiis veritatis libero maxime et.
         type: string
       expectedResult:
         description: Result expected
-        example: Perferendis voluptas doloremque iure.
+        example: Distinctio recusandae cum atque quo reiciendis.
         type: string
       timeout:
         description: Maximum seconds to wait until succesfull response
-        example: 7.29931236802094e+17
+        example: 6.363292654853665e+18
         format: int64
         type: integer
     title: WaitCommand
@@ -260,10 +295,16 @@ paths:
       description: Response with the details of the swarm
       operationId: swarm#status
       produces:
-      - text/plain
+      - application/atq.swarm+json
       responses:
         "200":
           description: Details of the Docker Swarm cluster
+          schema:
+            $ref: '#/definitions/AtqSwarm'
+        "503":
+          description: Docker Swarm context Error Message
+          schema:
+            $ref: '#/definitions/AtqSwarmError'
       schemes:
       - http
       summary: status swarm

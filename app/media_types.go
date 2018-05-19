@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package app
@@ -40,6 +40,21 @@ type AtqDatabindUploadCollection []*AtqDatabindUpload
 //
 // Identifier: application/atq.databind.upload+json; type=collection; view=error
 type AtqDatabindUploadErrorCollection []*AtqDatabindUploadError
+
+// Swarm Details (default view)
+//
+// Identifier: application/atq.swarm+json; view=default
+type AtqSwarm struct {
+	JoinTokens *JoinTokens `form:"joinTokens,omitempty" json:"joinTokens,omitempty" xml:"joinTokens,omitempty"`
+}
+
+// Swarm Details (error view)
+//
+// Identifier: application/atq.swarm+json; view=error
+type AtqSwarmError struct {
+	// Swarm Error Message
+	Error *string `form:"error,omitempty" json:"error,omitempty" xml:"error,omitempty"`
+}
 
 // Task description (default view)
 //

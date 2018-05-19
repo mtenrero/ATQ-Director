@@ -36,12 +36,8 @@ func overlayNetworkSpec(id string) types.NetworkCreate {
 	labels["com.docker.network.driver.overlay.vxlanid_list"] = id
 
 	return types.NetworkCreate{
-		Driver:     "overlay",
-		Scope:      "swarm",
-		EnableIPv6: true,
-		IPAM:       nil,
-		Ingress:    false,
-		Options:    nil,
-		Labels:     labels,
+		Driver: "overlay",
+		Scope:  "swarm",
+		Labels: labels,
 	}
 }
