@@ -85,10 +85,18 @@ func ComposeService(serviceImage *atqTypes.ServiceImage, globalAlias, alias stri
 		Name: alias,
 	}
 
+	var serviceMode swarm.ServiceMode
+
+	if mode == nil {
+		serviceMode = *ServiceModeDefault()
+	} else {
+		serviceMode = *mode
+	}
+
 	serviceSpec := swarm.ServiceSpec{
 		Annotations:  annotations,
 		TaskTemplate: *task,
-		Mode:         *mode,
+		Mode:         serviceMode,
 	}
 
 	service, serviceErr := CreateService(serviceSpec)
