@@ -9,14 +9,14 @@ import (
 func TestCreateService(t *testing.T) {
 	ensureSwarm()
 
-	RemoveNetwork("TEST_SERVICE")
+	RemoveNetwork("TEST_SERVICECREATION")
 
 	serviceImage := types.ServiceImage{
 		ImageName: "hello-world",
 		TTY:       true,
 	}
 
-	service, err := ComposeService(&serviceImage, "TEST_SERVICECREATION", "/tmp", nil)
+	service, err := ComposeService(&serviceImage, "TEST_SERVICECREATION", "ALIAS", nil, nil)
 	if err != nil {
 		t.Errorf("Error creating service : %s", err)
 	}
@@ -35,7 +35,7 @@ func TestRemoveService(t *testing.T) {
 		TTY:       true,
 	}
 
-	service, err := ComposeService(&serviceImage, "TEST_SERVICEDELETE", "/tmp", nil)
+	service, err := ComposeService(&serviceImage, "TEST_SERVICEDELETE", "TEST_SERVICEDELETE", nil, nil)
 	if err != nil {
 		t.Errorf("Error creating service : %s", err)
 	}

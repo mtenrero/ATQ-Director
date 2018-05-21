@@ -51,3 +51,18 @@ func ServiceVIPS(serviceID string) (*[]swarm.EndpointVirtualIP, error) {
 
 	return &vips, err
 }
+
+// ServiceModeDefault returns a Replicated Service Mode with 1 replica by default
+func ServiceModeDefault() *swarm.ServiceMode {
+
+	var amountReplicas = uint64(1)
+
+	replicated := swarm.ReplicatedService{
+		Replicas: &amountReplicas,
+	}
+
+	serviceMode := swarm.ServiceMode{
+		Replicated: &replicated,
+	}
+	return &serviceMode
+}
