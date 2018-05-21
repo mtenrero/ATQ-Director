@@ -9,7 +9,7 @@ import (
 func TestCreateService(t *testing.T) {
 	ensureSwarm()
 
-	RemoveNetwork("TEST_SERVICE")
+	RemoveNetwork("TEST_SERVICECREATION")
 
 	serviceImage := types.ServiceImage{
 		ImageName: "hello-world",
