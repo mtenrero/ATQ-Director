@@ -56,3 +56,19 @@ func NetworkContainerPeers(networkID string) (*[]network.PeerInfo, error) {
 	var peers = network.Peers
 	return &peers, nil
 }
+
+// NetworkVIPs returns the string list containing all Virtual IPs of a given Network
+func NetworkVIPs(containerID string) (*[]string, error) {
+	ips := make([]string, 0)
+
+	peers, err := NetworkContainerPeers(containerID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, ip := range *peers {
+		ips = append(ips, ip.IP)
+	}
+
+	return &ips, nil
+}

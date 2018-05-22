@@ -66,3 +66,14 @@ func ServiceModeDefault() *swarm.ServiceMode {
 	}
 	return &serviceMode
 }
+
+// ServiceDetails return the Service details
+func ServiceDetails(serviceID string) (*swarm.Service, error) {
+	client := getClient()
+
+	serviceInspect, _, err := client.ServiceInspectWithRaw(context.Background(), serviceID, types.ServiceInspectOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return &serviceInspect, nil
+}
