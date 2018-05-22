@@ -8,11 +8,38 @@ import (
 	"github.com/mtenrero/ATQ-Director/types"
 )
 
-// TaskMasterWorker initializes a new Master/Worker Task Type
-func TaskMasterWorker(task *app.TaskPayload) (*app.AtqTask, error) {
-	worker, err := InitWorkerService(task.Name, task.Worker)
+// GlobalTimeoutSeconds specify the predefined timeout for the orchestration processes
+const GlobalTimeoutSeconds = 60
 
-	return worker, err
+// TaskMasterWorker initializes a new Master/Worker Task Type
+func TaskMasterWorker(task *app.TaskPayload) (*app.AtqTaskFull, error) {
+	var worker *app.AtqTask
+	//var master *app.AtqTask
+	//var peers *[]network.PeerInfo
+	var err error
+
+	worker, err = InitWorkerService(task.Name, task.Worker)
+	if err != nil {
+		return nil, err
+	}
+
+	err = WorkerHealthchecks(*worker.ID, *task.Worker.Replicas, GlobalTimeoutSeconds)
+	if err != nil {
+		return nil, err
+	}
+
+	vips, err := NetworkVIPs(*worker.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = InitMasterService(task.Name, task.Master, vips)
+	if err != nil {
+		return nil, err
+	}
+
+	// TO-DO To be implemented
+	return nil, err
 }
 
 // InitWorkerService initializes the Worker Service and attach them to a random generated Network
@@ -45,13 +72,18 @@ func InitWorkerService(globalAlias string, worker *app.ServicePayload) (*app.Atq
 }
 
 // InitMasterService initializes the Master Service and attach it to the given Network name
-func InitMasterService(master *app.ServicePayload) (*app.ServicePayload, error) {
+func InitMasterService(globalAlias string, master *app.ServicePayload, workerVIPs *[]string) (*app.AtqTask, error) {
 
 	return nil, nil
 }
 
 // WorkerHealthchecks runs the given healthchecks in a Service to ensure all worker containers are ready for use
-func WorkerHealthchecks() error {
+func WorkerHealthchecks(containerID string, replicas int, timeoutSeconds int) error {
+
+	err := VIPSWaiter(containerID, replicas, timeoutSeconds)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
