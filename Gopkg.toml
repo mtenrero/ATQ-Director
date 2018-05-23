@@ -52,3 +52,7 @@
 [[constraint]]
   name = "github.com/satori/go.uuid"
   revision = "master"
+
+[[constraint]]
+  name = "github.com/tidwall/buntdb"
+  version = "1.0.0"
