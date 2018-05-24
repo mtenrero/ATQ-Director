@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
+// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
 // --version=v1.3.1
 
 package test

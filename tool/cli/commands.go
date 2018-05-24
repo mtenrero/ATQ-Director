@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
+// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
 // --version=v1.3.1
 
 package cli
@@ -87,33 +87,35 @@ func RegisterCommands(app *cobra.Command, c *client.Client) {
 Payload example:
 
 {
-   "delay": 1,
+   "delay": 2,
    "master": {
       "alias": "ALIAS",
       "args": [
-         "Quia aut omnis ut nemo qui in.",
-         "Quia aut omnis ut nemo qui in."
+         "Sed consequatur est suscipit sed consectetur est.",
+         "Sed consequatur est suscipit sed consectetur est.",
+         "Sed consequatur est suscipit sed consectetur est."
       ],
-      "fileid": "Repellendus aut.",
+      "fileid": "Rem blanditiis ut saepe rem.",
       "image": "hello-world",
-      "replicas": 7215529505515558647,
+      "replicas": 868313167729234131,
       "tty": true
    },
-   "name": "na3",
+   "name": "lz4gm",
    "waitCommand": {
-      "command": "Officiis veritatis libero maxime et.",
-      "expectedResult": "Distinctio recusandae cum atque quo reiciendis.",
-      "timeout": 6363292654853665191
+      "command": "Quos voluptatem.",
+      "expectedResult": "Sapiente eius nemo ab.",
+      "timeout": 655405943771915737
    },
    "worker": {
       "alias": "ALIAS",
       "args": [
-         "Quia aut omnis ut nemo qui in.",
-         "Quia aut omnis ut nemo qui in."
+         "Sed consequatur est suscipit sed consectetur est.",
+         "Sed consequatur est suscipit sed consectetur est.",
+         "Sed consequatur est suscipit sed consectetur est."
       ],
-      "fileid": "Repellendus aut.",
+      "fileid": "Rem blanditiis ut saepe rem.",
       "image": "hello-world",
-      "replicas": 7215529505515558647,
+      "replicas": 868313167729234131,
       "tty": true
    }
 }`,
@@ -206,7 +208,7 @@ Payload example:
 Payload example:
 
 {
-   "file": "109fec02-1592-4a6a-bafc-d63737da0a91"
+   "file": 365897335134364410
 }`,
 		RunE: func(cmd *cobra.Command, args []string) error { return tmp7.Run(c, args) },
 	}

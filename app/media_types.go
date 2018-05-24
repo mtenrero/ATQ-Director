@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
+// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
 // --version=v1.3.1
 
 package app
@@ -40,6 +40,46 @@ type AtqDatabindUploadCollection []*AtqDatabindUpload
 //
 // Identifier: application/atq.databind.upload+json; type=collection; view=error
 type AtqDatabindUploadErrorCollection []*AtqDatabindUploadError
+
+// Created Relevant Service Information (default view)
+//
+// Identifier: application/atq.service+json; view=default
+type AtqService struct {
+	// ATQ Service internal alias
+	Alias *string `form:"alias,omitempty" json:"alias,omitempty" xml:"alias,omitempty"`
+	// ATQ FileID if exists
+	FileID *string `form:"fileId,omitempty" json:"fileId,omitempty" xml:"fileId,omitempty"`
+	// Docker Service internal identifier
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+}
+
+// Created Relevant Service Information (full view)
+//
+// Identifier: application/atq.service+json; view=full
+type AtqServiceFull struct {
+	// ATQ Service internal alias
+	Alias *string `form:"alias,omitempty" json:"alias,omitempty" xml:"alias,omitempty"`
+	// Arguments passed to the containers
+	Args []string `form:"args,omitempty" json:"args,omitempty" xml:"args,omitempty"`
+	// ATQ FileID if exists
+	FileID *string `form:"fileId,omitempty" json:"fileId,omitempty" xml:"fileId,omitempty"`
+	// Docker Service internal identifier
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Docker Image Name
+	Image *string `form:"image,omitempty" json:"image,omitempty" xml:"image,omitempty"`
+	// Amount of Replicas
+	Replicas *int `form:"replicas,omitempty" json:"replicas,omitempty" xml:"replicas,omitempty"`
+	// Interactive Shell
+	Tty *bool `form:"tty,omitempty" json:"tty,omitempty" xml:"tty,omitempty"`
+}
+
+// Created Relevant Service Information (minimal view)
+//
+// Identifier: application/atq.service+json; view=minimal
+type AtqServiceMinimal struct {
+	// Docker Service internal identifier
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+}
 
 // Swarm Details (default view)
 //
@@ -80,36 +120,24 @@ func (mt *AtqTask) Validate() (err error) {
 //
 // Identifier: application/atq.task+json; view=full
 type AtqTaskFull struct {
+	// Manual delay between starting Master and Worker services
 	Delay *int `form:"delay,omitempty" json:"delay,omitempty" xml:"delay,omitempty"`
 	// Task ID
-	ID     *string         `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
-	Master *ServicePayload `form:"master,omitempty" json:"master,omitempty" xml:"master,omitempty"`
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Master Service definition
+	Master *AtqService `form:"master,omitempty" json:"master,omitempty" xml:"master,omitempty"`
 	// Status of the Task
-	Status      *string         `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
-	WaitCommand *WaitCommand    `form:"waitCommand,omitempty" json:"waitCommand,omitempty" xml:"waitCommand,omitempty"`
-	Worker      *ServicePayload `form:"worker,omitempty" json:"worker,omitempty" xml:"worker,omitempty"`
+	Status      *string      `form:"status,omitempty" json:"status,omitempty" xml:"status,omitempty"`
+	WaitCommand *WaitCommand `form:"waitCommand,omitempty" json:"waitCommand,omitempty" xml:"waitCommand,omitempty"`
+	// Worker Service definition
+	Worker *AtqService `form:"worker,omitempty" json:"worker,omitempty" xml:"worker,omitempty"`
 }
 
 // Validate validates the AtqTaskFull media type instance.
 func (mt *AtqTaskFull) Validate() (err error) {
-	if mt.Delay != nil {
-		if *mt.Delay < 0 {
-			err = goa.MergeErrors(err, goa.InvalidRangeError(`response.delay`, *mt.Delay, 0, true))
-		}
-	}
-	if mt.Master != nil {
-		if err2 := mt.Master.Validate(); err2 != nil {
-			err = goa.MergeErrors(err, err2)
-		}
-	}
 	if mt.Status != nil {
 		if !(*mt.Status == "initializing" || *mt.Status == "started" || *mt.Status == "stopped" || *mt.Status == "finished" || *mt.Status == "errored") {
 			err = goa.MergeErrors(err, goa.InvalidEnumValueError(`response.status`, *mt.Status, []interface{}{"initializing", "started", "stopped", "finished", "errored"}))
-		}
-	}
-	if mt.Worker != nil {
-		if err2 := mt.Worker.Validate(); err2 != nil {
-			err = goa.MergeErrors(err, err2)
 		}
 	}
 	return

@@ -12,6 +12,8 @@ const TaskDelay = ":delay"
 const TaskMaster = ":master"
 const TaskWorker = ":worker"
 const TaskStatus = ":status"
+const TaskAliasMaster = ":masteralias"
+const TaskAliasWorker = ":workeralias"
 
 // IndexTask set the Index in the Task K/V storage
 func (p *Persistance) IndexTask() {
@@ -40,20 +42,34 @@ func (p *Persistance) StoreTask(alias string, fileID *string, delay int) error {
 }
 
 // StoreTaskMaster persists the Master service ID inside taskId properties
-func (p *Persistance) StoreTaskMaster(taskId, serviceID string) error {
+func (p *Persistance) StoreTaskMaster(taskId, serviceID, alias string) error {
 	var baseKey = "task:" + taskId
 
 	var master = baseKey + TaskMaster
 	err := p.store(master, serviceID)
+	if err != nil {
+		return err
+	}
+
+	var aliasKey = baseKey + TaskAliasMaster
+	err = p.store(aliasKey, alias)
+
 	return err
 }
 
 // StoreTaskWorker persists the Master service ID inside taskId properties
-func (p *Persistance) StoreTaskWorker(taskId, serviceID string) error {
+func (p *Persistance) StoreTaskWorker(taskId, serviceID, alias string) error {
 	var baseKey = "task:" + taskId
 
 	var worker = baseKey + TaskWorker
 	err := p.store(worker, serviceID)
+	if err != nil {
+		return err
+	}
+
+	var aliasKey = baseKey + TaskAliasWorker
+	err = p.store(aliasKey, alias)
+
 	return err
 }
 
@@ -98,17 +114,29 @@ func (p *Persistance) ReadTask(taskId string) (*app.AtqTaskFull, error) {
 		return nil, err
 	}
 
+	workerAlias, err := p.read("task:" + taskId + TaskAliasWorker)
+	if err != nil {
+		return nil, err
+	}
+
+	masterAlias, err := p.read("task:" + taskId + TaskAliasMaster)
+	if err != nil {
+		return nil, err
+	}
+
 	task := app.AtqTaskFull{
 		Delay: &delayInt,
 		ID:    &taskId,
-		Master: &app.ServicePayload{
-			Fileid: &fileID,
-			Alias:  masterID,
+		Master: &app.AtqService{
+			FileID: &fileID,
+			ID:     &masterID,
+			Alias:  &masterAlias,
 		},
 		Status: &status,
-		Worker: &app.ServicePayload{
-			Fileid: &fileID,
-			Alias:  workerID,
+		Worker: &app.AtqService{
+			FileID: &fileID,
+			ID:     &workerID,
+			Alias:  &workerAlias,
 		},
 	}
 
