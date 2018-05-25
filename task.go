@@ -27,7 +27,7 @@ func (c *TaskController) Create(ctx *app.CreateTaskContext) error {
 		return ctx.DefinitionError(&errorResponse)
 	}
 
-	return ctx.OK(task)
+	return ctx.OKFull(task)
 	// TaskController_Create: end_implement
 }
 
