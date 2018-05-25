@@ -41,5 +41,10 @@ pipeline {
             }
         }
     }
-    
+
+    post {
+        success {
+            archiveArtifacts 'releases/*'
+        }
+    }
 }
