@@ -29,3 +29,36 @@ var ServicePayload = Type("ServicePayload", func() {
 	})
 	Required("image", "alias")
 })
+
+var ServiceResponse = MediaType("application/atq.service+json", func() {
+	Description("Created Relevant Service Information")
+	Attributes(func() {
+		Attribute("id", String, "Docker Service internal identifier")
+		Attribute("fileId", String, "ATQ FileID if exists")
+		Attribute("image", String, "Docker Image Name")
+		Attribute("alias", String, "ATQ Service internal alias")
+		Attribute("replicas", Integer, "Amount of Replicas")
+		Attribute("tty", Boolean, "Interactive Shell")
+		Attribute("args", ArrayOf(String), "Arguments passed to the containers")
+	})
+
+	View("default", func() {
+		Attribute("id")
+		Attribute("alias")
+		Attribute("fileId")
+	})
+
+	View("minimal", func() {
+		Attribute("id")
+	})
+
+	View("full", func() {
+		Attribute("id")
+		Attribute("fileId")
+		Attribute("image")
+		Attribute("alias")
+		Attribute("replicas")
+		Attribute("tty")
+		Attribute("args")
+	})
+})

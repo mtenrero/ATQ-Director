@@ -48,12 +48,12 @@ func TestWholeTask(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = p.StoreTaskMaster("TASK", "MASTER")
+	err = p.StoreTaskMaster("TASK", "MASTER", "MASTERALIAS")
 	if err != nil {
 		t.Error(err)
 	}
 
-	err = p.StoreTaskWorker("TASK", "WORKER")
+	err = p.StoreTaskWorker("TASK", "WORKER", "WORKERALIAS")
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,20 +64,24 @@ func TestWholeTask(t *testing.T) {
 	}
 
 	assert.Equal(t, 3, *task.Delay)
-	assert.Equal(t, "MASTER", task.Master.Alias)
-	assert.Equal(t, "WORKER", task.Worker.Alias)
-	assert.Equal(t, "/tmp", *task.Master.Fileid)
-	assert.Equal(t, "/tmp", *task.Worker.Fileid)
+	assert.Equal(t, "MASTER", *task.Master.ID)
+	assert.Equal(t, "WORKER", *task.Worker.ID)
+	assert.Equal(t, "/tmp", *task.Master.FileID)
+	assert.Equal(t, "/tmp", *task.Worker.FileID)
+	assert.Equal(t, "MASTERALIAS", *task.Master.Alias)
+	assert.Equal(t, "WORKERALIAS", *task.Worker.Alias)
 
 	defer teardown(p, true)
 }
 
 func teardown(p *Persistance, close bool) {
-	p.delete("task:TASK:fileID")
-	p.delete("task:TASK:delay")
-	p.delete("task:TASK:master")
-	p.delete("task:TASK:worker")
-	p.delete("task:TASK:status")
+	p.delete("task:TASK" + TaskFileId)
+	p.delete("task:TASK" + TaskDelay)
+	p.delete("task:TASK" + TaskMaster)
+	p.delete("task:TASK" + TaskWorker)
+	p.delete("task:TASK" + TaskStatus)
+	p.delete("task:TASK" + TaskAliasMaster)
+	p.delete("task:TASK" + TaskAliasWorker)
 
 	if close {
 		p.ClosePersistance()
