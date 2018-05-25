@@ -1,6 +1,6 @@
 # Automation Test Queue (ATQ): Director
 
-[![Build Status](http://ec2-35-177-127-126.eu-west-2.compute.amazonaws.com:8080/buildStatus/icon?job=ATQ/develop)](http://ec2-35-177-127-126.eu-west-2.compute.amazonaws.com:8080/job/ATQ/job/develop/)
+[![Build Status](http://atq.mtenrero.com:8080/buildStatus/icon?job=ATQ/develop)](http://atq.mtenrero.com:8080/job/ATQ/job/develop/)
 [![Coverage Status](https://coveralls.io/repos/github/mtenrero/ATQ-Director/badge.svg)](https://coveralls.io/github/mtenrero/ATQ-Director)
 [![API Documentation](https://img.shields.io/badge/API-Documentation-orange.svg)](https://editor2.swagger.io/?url=https://raw.githubusercontent.com/mtenrero/ATQ-Director/master/swagger/swagger.yaml)
 
