@@ -10,3 +10,5 @@ releases/
 
 coverage.txt
 debug
+persistance/storage/dev_testing.atq
+coverage

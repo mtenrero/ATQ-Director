@@ -78,7 +78,6 @@ var TaskPayload = Type("TaskPayload", func() {
 
 var Task = MediaType("application/atq.task+json", func() {
 	Description("Task description")
-	Reference(TaskPayload)
 	Attributes(func() {
 		Attribute("id", String, "Task ID")
 		Attribute("status", func() {
@@ -86,10 +85,10 @@ var Task = MediaType("application/atq.task+json", func() {
 			Description("Status of the Task")
 		})
 
-		Attribute("master")
-		Attribute("worker")
-		Attribute("waitCommand")
-		Attribute("delay")
+		Attribute("master", ServiceResponse, "Master Service definition")
+		Attribute("worker", ServiceResponse, "Worker Service definition")
+		Attribute("waitCommand", WaitCommand)
+		Attribute("delay", Integer, "Manual delay between starting Master and Worker services")
 	})
 	View("default", func() {
 		Attribute("id")
