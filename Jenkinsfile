@@ -13,7 +13,7 @@ pipeline {
             steps {
                 sh 'echo $GOPATH'
                 sh 'mkdir -p $GOPATH/src/github.com/mtenrero/'
-                sh 'ln -s "$WORKSPACE" "$GOPATH/src/github.com/mtenrero/ATQ-Director/"'
+                sh 'ln -s "$WORKSPACE" "$GOPATH/src/github.com/mtenrero/ATQ-Director"'
                 sh 'ls -a $GOPATH/src/github.com/mtenrero/ATQ-Director'
                 sh 'go get -u github.com/golang/dep/cmd/dep'
                 sh 'go get -u github.com/golang/lint/golint'
