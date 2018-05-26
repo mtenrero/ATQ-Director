@@ -77,3 +77,24 @@ func ServiceDetails(serviceID string) (*swarm.Service, error) {
 	}
 	return &serviceInspect, nil
 }
+
+// ServiceAttachedNetworkID finds the network attached to a Service and return its attached netwrok
+func ServiceAttachedNetworkID(serviceID string) (*string, error) {
+
+	endpoint, err := ServiceVIPS(serviceID)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(*endpoint) != 1 {
+		return nil, err
+	}
+
+	var networkID string
+
+	for _, vip := range *endpoint {
+		networkID = vip.NetworkID
+	}
+
+	return &networkID, nil
+}

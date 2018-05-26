@@ -66,17 +66,36 @@ func CreateNetworkMap(alias string) (*swarm.NetworkAttachmentConfig, error) {
 	return &networkAttachConfig, netError
 }
 
+// AttachNetworkMap creates a networkAttachmentConfig with the existing specified network
+func AttachNetworkMap(alias string, networkID string) *swarm.NetworkAttachmentConfig {
+	aliases := []string{alias}
+
+	networkAttachConfig := swarm.NetworkAttachmentConfig{
+		Target:  networkID,
+		Aliases: aliases,
+	}
+
+	return &networkAttachConfig
+}
+
 // ComposeService Maps the values to a new service
-func ComposeService(serviceImage *atqTypes.ServiceImage, globalAlias, alias string, path *string, mode *swarm.ServiceMode) (*types.ServiceCreateResponse, error) {
+func ComposeService(serviceImage *atqTypes.ServiceImage, globalAlias, alias string, path *string, mode *swarm.ServiceMode, networkID *string) (*types.ServiceCreateResponse, error) {
 
 	mounts := CreateMounts(path, alias)
 
 	containerSpec := ContainerSpecMapper(serviceImage, alias, mounts)
 
-	networkSpec, netError := CreateNetworkMap(globalAlias)
+	var networkSpec *swarm.NetworkAttachmentConfig
 
-	if netError != nil {
-		return nil, netError
+	if networkID != nil {
+		networkSpec = AttachNetworkMap(globalAlias, *networkID)
+	} else {
+		var netError error
+		networkSpec, netError = CreateNetworkMap(globalAlias)
+
+		if netError != nil {
+			return nil, netError
+		}
 	}
 
 	task := TaskSpecMapper(containerSpec, []swarm.NetworkAttachmentConfig{*networkSpec})
