@@ -12,6 +12,21 @@ This ease the testing stage in CI/CD scenarios, allowing to run tests in a publi
 
 It's developed in Golang and cross-compiled, so it's compatible natively with al OSes (Linux, OSX and Windows) and works with both container types: Windows & Linux with minimum host resource consumption.
 
+## How It Works?
+
+![Deployment Arch](./readme/newArch.png)
+
+ATQ-Director is installed in the Docker Swarm Host and listen for requests in a specified HTTP port.
+
+When a new task is received, ATQ-Director deploys a new Service containing Discovery functions in all the Manager nodes in Global mode and exposes in the hosts the port 9090.
+
+Then the Worker Service is deployed within the same network with DNSRR mode in order to make Discovery works.
+
+ATQ waits until all containers are up & running and all their VIPs are accesible inside the created network using the first deployed Discovery Service and then, removes the Discovery service as it won't be needed anymore.
+
+Master service is deployed in the same network context in mode replicated with only 1 instance.
+
+The test stage begins as you deserve!
 
 ![Architecture](./readme/ATQ-arch.png)
 
