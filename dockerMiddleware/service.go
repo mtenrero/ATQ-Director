@@ -23,6 +23,17 @@ func RemoveService(serviceID string) error {
 	return client.ServiceRemove(context.Background(), serviceID)
 }
 
+// globalService returns a Global Service Mode
+func globalService() *swarm.ServiceMode {
+	global := swarm.GlobalService{}
+	serviceMode := swarm.ServiceMode{
+		Replicated: nil,
+		Global:     &global,
+	}
+
+	return &serviceMode
+}
+
 // replicatedService returns a Service Mode configurated with the given replicas amount
 func replicatedService(replicas int) *swarm.ServiceMode {
 	ureplicas := uint64(replicas)

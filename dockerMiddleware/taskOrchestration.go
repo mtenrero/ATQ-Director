@@ -4,6 +4,8 @@ import (
 	"errors"
 	"time"
 
+	"log"
+
 	"github.com/mtenrero/ATQ-Director/persistance"
 
 	dockerTypes "docker.io/go-docker/api/types"
@@ -28,7 +30,20 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 		return nil, err
 	}
 
-	worker, err = InitService(Worker, task.Name, task.Worker, nil)
+	// Deploy Discoverer Service
+	discoverer, err := InitDiscoverer(task.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	// Obtain Service Attached Network
+	discovererNetworkID, err := ServiceAttachedNetworkID(*discoverer.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Init Worker Service
+	worker, err = InitService(Worker, task.Name, task.Worker, discovererNetworkID)
 	if err != nil {
 		return nil, err
 	}
@@ -47,13 +62,7 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 		return nil, err
 	}
 
-	// Obtain Service Attached Network
-	workerNetworkID, err := ServiceAttachedNetworkID(*worker.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	master, err = InitService(Master, task.Name, task.Master, workerNetworkID)
+	master, err = InitService(Master, task.Name, task.Master, discovererNetworkID)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +110,7 @@ func InitService(serviceType Service, globalAlias string, service *app.ServicePa
 		}
 		serviceCreateResponse, err = ComposeService(&serviceImage, globalAlias, workerBaseAlias, volumeBindPath, replicatedService(*service.Replicas), networkID)
 	case Worker:
-		serviceCreateResponse, err = ComposeService(&serviceImage, globalAlias, workerBaseAlias, volumeBindPath, replicatedService(*service.Replicas), nil)
+		serviceCreateResponse, err = ComposeService(&serviceImage, globalAlias, workerBaseAlias, volumeBindPath, replicatedService(*service.Replicas), networkID)
 	}
 
 	if err != nil {
@@ -112,6 +121,29 @@ func InitService(serviceType Service, globalAlias string, service *app.ServicePa
 		Alias:  &service.Alias,
 		ID:     &serviceCreateResponse.ID,
 		FileID: service.Fileid,
+	}
+
+	return &serviceResponse, nil
+}
+
+// InitDiscoverer deploys dnsrr-discovery API into the Swarm
+func InitDiscoverer(globalAlias string) (*app.AtqService, error) {
+
+	serviceImage := types.ServiceImage{
+		ImageName: "tenrero/dnsrr-discovery-api",
+		TTY:       true,
+	}
+
+	var workerBaseAlias = globalAlias + "_" + Discoverer.Name()
+	serviceCreateResponse, err := ComposeService(&serviceImage, globalAlias, workerBaseAlias, nil, globalService(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	serviceResponse := app.AtqService{
+		Alias:  &workerBaseAlias,
+		ID:     &serviceCreateResponse.ID,
+		FileID: nil,
 	}
 
 	return &serviceResponse, nil
@@ -136,25 +168,32 @@ func VIPSWaiter(serviceID string, replicas int, timeout int) error {
 	timeoutchan := time.After(time.Duration(timeout) * time.Second)
 	tick := time.Tick(500 * time.Millisecond)
 
-	// Obtain Service Attached Network
-	networkID, err := ServiceAttachedNetworkID(serviceID)
-	if err != nil {
-		return err
-	}
-
 	for {
 		select {
 		case <-timeoutchan:
 			return errors.New("Timed out waiting for all VIPS. Containers are not ready")
 		case <-tick:
-			vips, err := NetworkVIPs(*networkID)
+			log.Println("tick")
+			// Obtain Service Attached Network
+			networkID, err := ServiceAttachedNetworkID(serviceID)
 			if err != nil {
 				return err
 			}
-			vipsAmount := len(*vips)
 
-			if vipsAmount == vipsExpected {
-				return nil
+			log.Println(*networkID)
+
+			if networkID != nil {
+				vips, err := NetworkVIPs(*networkID)
+				if err != nil {
+					return err
+				}
+
+				vipsAmount := len(*vips)
+				log.Println(vipsAmount)
+
+				if vipsAmount == vipsExpected {
+					return nil
+				}
 			}
 		}
 	}

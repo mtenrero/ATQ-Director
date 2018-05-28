@@ -1,6 +1,8 @@
 package dockerMiddleware
 
 import (
+	"strings"
+
 	"docker.io/go-docker/api/types"
 	"docker.io/go-docker/api/types/mount"
 	"docker.io/go-docker/api/types/swarm"
@@ -112,9 +114,34 @@ func ComposeService(serviceImage *atqTypes.ServiceImage, globalAlias, alias stri
 		serviceMode = *mode
 	}
 
+	var endpointSpec swarm.EndpointSpec
+
+	if !strings.Contains(alias, "DISCOVER") {
+		endpointSpec = swarm.EndpointSpec{
+			Mode: "dnsrr",
+		}
+	} else {
+		var ports []swarm.PortConfig
+		port := swarm.PortConfig{
+			Name:          "discovery",
+			Protocol:      "tcp",
+			TargetPort:    9090,
+			PublishedPort: 9090,
+			PublishMode:   swarm.PortConfigPublishModeHost,
+		}
+
+		ports = append(ports, port)
+
+		endpointSpec = swarm.EndpointSpec{
+			Mode:  "vip",
+			Ports: ports,
+		}
+	}
+
 	serviceSpec := swarm.ServiceSpec{
 		Annotations:  annotations,
 		TaskTemplate: *task,
+		EndpointSpec: &endpointSpec,
 		Mode:         serviceMode,
 	}
 
