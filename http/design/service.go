@@ -10,6 +10,9 @@ var ServicePayload = Type("ServicePayload", func() {
 		Description("Docker base image to attach to Service")
 		Example(`hello-world`)
 	})
+	Attribute("environment", ArrayOf(String), func() {
+		Description("Environment variables list")
+	})
 	Attribute("replicas", Integer, func() {
 		Description("Amount of replicas to be deployed. (1 by default)")
 	})

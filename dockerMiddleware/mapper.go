@@ -20,6 +20,8 @@ func ContainerSpecMapper(serviceImage *atqTypes.ServiceImage, alias string, moun
 		TTY:    serviceImage.TTY,
 		Mounts: mounts,
 		Labels: aliasMap,
+		Args:   serviceImage.Args,
+		Env:    serviceImage.Environment,
 	}
 
 	return &spec

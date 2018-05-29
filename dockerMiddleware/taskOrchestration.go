@@ -99,8 +99,10 @@ func InitService(serviceType Service, globalAlias string, service *app.ServicePa
 	var err error
 
 	serviceImage := types.ServiceImage{
-		ImageName: service.Image,
-		TTY:       *service.Tty,
+		ImageName:   service.Image,
+		TTY:         *service.Tty,
+		Args:        service.Args,
+		Environment: service.Environment,
 	}
 
 	switch serviceType {

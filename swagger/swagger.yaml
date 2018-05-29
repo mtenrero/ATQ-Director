@@ -19,7 +19,6 @@ definitions:
     example:
     - id: Harum magni.
     - id: Harum magni.
-    - id: Harum magni.
     items:
       $ref: '#/definitions/AtqDatabindUpload'
     title: 'Mediatype identifier: application/atq.databind.upload+json; type=collection;
@@ -99,9 +98,11 @@ definitions:
       alias: ALIAS
       args:
       - Excepturi voluptas sed consequatur est suscipit sed.
-      fileid: Est qui rem blanditiis ut saepe rem.
+      environment:
+      - Qui rem.
+      fileid: Ut saepe rem commodi.
       image: hello-world
-      replicas: 8.683131677292342e+17
+      replicas: 4.279616947699503e+18
       tty: true
     properties:
       alias:
@@ -116,10 +117,18 @@ definitions:
           example: Excepturi voluptas sed consequatur est suscipit sed.
           type: string
         type: array
+      environment:
+        description: Environment variables list
+        example:
+        - Qui rem.
+        items:
+          example: Qui rem.
+          type: string
+        type: array
       fileid:
         description: ID of the Zipped contents that will be mounted and accesible
           inside the container, PREVIOUSLY UPLOADED
-        example: Est qui rem blanditiis ut saepe rem.
+        example: Ut saepe rem commodi.
         type: string
       image:
         description: Docker base image to attach to Service
@@ -127,7 +136,7 @@ definitions:
         type: string
       replicas:
         description: Amount of replicas to be deployed. (1 by default)
-        example: 8.683131677292342e+17
+        example: 4.279616947699503e+18
         format: int64
         type: integer
       tty:
@@ -146,11 +155,13 @@ definitions:
         alias: ALIAS
         args:
         - Excepturi voluptas sed consequatur est suscipit sed.
-        fileid: Est qui rem blanditiis ut saepe rem.
+        environment:
+        - Qui rem.
+        fileid: Ut saepe rem commodi.
         image: hello-world
-        replicas: 8.683131677292342e+17
+        replicas: 4.279616947699503e+18
         tty: true
-      name: lz4gm
+      name: z4g
       waitCommand:
         command: Quos voluptatem.
         expectedResult: Sapiente eius nemo ab.
@@ -159,9 +170,11 @@ definitions:
         alias: ALIAS
         args:
         - Excepturi voluptas sed consequatur est suscipit sed.
-        fileid: Est qui rem blanditiis ut saepe rem.
+        environment:
+        - Qui rem.
+        fileid: Ut saepe rem commodi.
         image: hello-world
-        replicas: 8.683131677292342e+17
+        replicas: 4.279616947699503e+18
         tty: true
     properties:
       delay:
@@ -172,7 +185,7 @@ definitions:
         $ref: '#/definitions/ServicePayload'
       name:
         description: Task Name Identifier
-        example: lz4gm
+        example: z4g
         maxLength: 10
         minLength: 3
         type: string

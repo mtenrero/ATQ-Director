@@ -45,6 +45,8 @@ type servicePayload struct {
 	Alias *string `form:"alias,omitempty" json:"alias,omitempty" xml:"alias,omitempty"`
 	// Arguments to be passed to the container
 	Args []string `form:"args,omitempty" json:"args,omitempty" xml:"args,omitempty"`
+	// Environment variables list
+	Environment []string `form:"environment,omitempty" json:"environment,omitempty" xml:"environment,omitempty"`
 	// ID of the Zipped contents that will be mounted and accesible inside the container, PREVIOUSLY UPLOADED
 	Fileid *string `form:"fileid,omitempty" json:"fileid,omitempty" xml:"fileid,omitempty"`
 	// Docker base image to attach to Service
@@ -75,6 +77,9 @@ func (ut *servicePayload) Publicize() *ServicePayload {
 	if ut.Args != nil {
 		pub.Args = ut.Args
 	}
+	if ut.Environment != nil {
+		pub.Environment = ut.Environment
+	}
 	if ut.Fileid != nil {
 		pub.Fileid = ut.Fileid
 	}
@@ -96,6 +101,8 @@ type ServicePayload struct {
 	Alias string `form:"alias" json:"alias" xml:"alias"`
 	// Arguments to be passed to the container
 	Args []string `form:"args,omitempty" json:"args,omitempty" xml:"args,omitempty"`
+	// Environment variables list
+	Environment []string `form:"environment,omitempty" json:"environment,omitempty" xml:"environment,omitempty"`
 	// ID of the Zipped contents that will be mounted and accesible inside the container, PREVIOUSLY UPLOADED
 	Fileid *string `form:"fileid,omitempty" json:"fileid,omitempty" xml:"fileid,omitempty"`
 	// Docker base image to attach to Service
