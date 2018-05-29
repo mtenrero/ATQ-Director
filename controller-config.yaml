@@ -1,4 +1,4 @@
-port: 9050
+port: 8080
 images:
   - imageName: mtenrero/jmeter
     args:
