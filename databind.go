@@ -32,13 +32,16 @@ func NewDatabindController(service *goa.Service, persistance *persistance.Persis
 
 // List runs the list action.
 func (c *DatabindController) List(ctx *app.ListDatabindContext) error {
-	// DatabindController_List: start_implement
 
-	// Put your logic here
+	p := c.Persistance
 
-	res := app.AtqDatabindUploadCollection{}
+	filesCollecion, err := p.ReadAllFiles()
+	if err != nil {
+
+	}
+
+	res := parseDatabind(filesCollecion)
 	return ctx.OK(res)
-	// DatabindController_List: end_implement
 }
 
 // Upload runs the upload action.
@@ -124,4 +127,17 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 func saveFileToDatastore(fileID, path string, p *persistance.Persistance) error {
 
 	return p.StoreFile(fileID, path)
+}
+
+func parseDatabind(collection *map[string]string) app.AtqDatabindUploadCollection {
+	typeCollection := make(app.AtqDatabindUploadCollection, 0)
+
+	for key := range *collection {
+		fileType := app.AtqDatabindUpload{
+			ID: &key,
+		}
+		typeCollection = append(typeCollection, &fileType)
+	}
+
+	return typeCollection
 }
