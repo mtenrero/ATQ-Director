@@ -35,7 +35,7 @@ func main() {
 	}
 
 	// Mount "databind" controller
-	c := NewDatabindController(service)
+	c := NewDatabindController(service, Persistance)
 	app.MountDatabindController(service, c)
 	// Mount "monitoring" controller
 	c2 := NewMonitoringController(service)

@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -10,19 +11,22 @@ import (
 
 	"github.com/goadesign/goa"
 	"github.com/mtenrero/ATQ-Director/app"
+	"github.com/mtenrero/ATQ-Director/persistance"
 )
 
 // DatabindController implements the databind resource.
 type DatabindController struct {
 	*goa.Controller
 	*sync.Mutex
+	*persistance.Persistance
 }
 
 // NewDatabindController creates a databind controller.
-func NewDatabindController(service *goa.Service) *DatabindController {
+func NewDatabindController(service *goa.Service, persistance *persistance.Persistance) *DatabindController {
 	return &DatabindController{
-		Controller: service.NewController("DatabindController"),
-		Mutex:      &sync.Mutex{},
+		Controller:  service.NewController("DatabindController"),
+		Mutex:       &sync.Mutex{},
+		Persistance: persistance,
 	}
 }
 
@@ -82,7 +86,8 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 		}
 
 		// Open file for later usage
-		file, fileErr := os.OpenFile("./files/"+part.FileName(), os.O_WRONLY|os.O_CREATE, 0666)
+		fileName := part.FileName()
+		file, fileErr := os.OpenFile("./files/"+fileName, os.O_WRONLY|os.O_CREATE, 0666)
 		if fileErr != nil {
 			errr := fileErr.Error()
 			atqUploadError := app.AtqDatabindUploadError{
@@ -99,6 +104,10 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 		timestampUID := time.Now().Unix()
 		timestampUIDString := strconv.Itoa(int(timestampUID))
 
+		// Save File to datastore
+		fullPath, _ := filepath.Abs("./files/" + fileName)
+		saveFileToDatastore(timestampUIDString, fullPath, c.Persistance)
+
 		atqUpload := app.AtqDatabindUpload{
 			ID: &timestampUIDString,
 		}
@@ -110,4 +119,9 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 	res := &app.AtqDatabindUpload{}
 	return ctx.OK(res)
 	// DatabindController_Upload: end_implement
+}
+
+func saveFileToDatastore(fileID, path string, p *persistance.Persistance) error {
+
+	return p.StoreFile(fileID, path)
 }
