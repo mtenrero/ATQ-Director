@@ -10,7 +10,6 @@ var _ = Resource("databind", func() {
 	Action("upload", func() {
 		Routing(POST("/upload"))
 		Description("Upload new zipped file for later usage with a Task")
-		Payload(UploadPayload)
 		Response("OK", func() {
 			Description("The file was uploaded succesfully")
 			Status(200)
@@ -36,16 +35,10 @@ var _ = Resource("databind", func() {
 	})
 })
 
-var UploadPayload = Type("UploadPayload", func() {
-	Attribute("file", Any, "Zipped File")
-	Required("file")
-})
-
 var Upload = MediaType("application/atq.databind.upload+json", func() {
-	Reference(UploadPayload)
 	Description("User upload files response")
 	Attributes(func() {
-		Attribute("id", UUID, "Upload ID")
+		Attribute("id", String, "Upload ID")
 		Attribute("error", String, "Error message if errored")
 	})
 	View("default", func() {

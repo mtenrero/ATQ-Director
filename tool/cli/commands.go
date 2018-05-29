@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package cli
@@ -35,8 +35,6 @@ type (
 
 	// UploadDatabindCommand is the command line data structure for the upload action of databind
 	UploadDatabindCommand struct {
-		Payload     string
-		ContentType string
 		PrettyPrint bool
 	}
 
@@ -91,11 +89,9 @@ Payload example:
    "master": {
       "alias": "ALIAS",
       "args": [
-         "Sed consequatur est suscipit sed consectetur est.",
-         "Sed consequatur est suscipit sed consectetur est.",
-         "Sed consequatur est suscipit sed consectetur est."
+         "Excepturi voluptas sed consequatur est suscipit sed."
       ],
-      "fileid": "Rem blanditiis ut saepe rem.",
+      "fileid": "Est qui rem blanditiis ut saepe rem.",
       "image": "hello-world",
       "replicas": 868313167729234131,
       "tty": true
@@ -109,11 +105,9 @@ Payload example:
    "worker": {
       "alias": "ALIAS",
       "args": [
-         "Sed consequatur est suscipit sed consectetur est.",
-         "Sed consequatur est suscipit sed consectetur est.",
-         "Sed consequatur est suscipit sed consectetur est."
+         "Excepturi voluptas sed consequatur est suscipit sed."
       ],
-      "fileid": "Rem blanditiis ut saepe rem.",
+      "fileid": "Est qui rem blanditiis ut saepe rem.",
       "image": "hello-world",
       "replicas": 868313167729234131,
       "tty": true
@@ -203,14 +197,7 @@ Payload example:
 	sub = &cobra.Command{
 		Use:   `databind ["/api/databind/upload"]`,
 		Short: ``,
-		Long: `
-
-Payload example:
-
-{
-   "file": 365897335134364410
-}`,
-		RunE: func(cmd *cobra.Command, args []string) error { return tmp7.Run(c, args) },
+		RunE:  func(cmd *cobra.Command, args []string) error { return tmp7.Run(c, args) },
 	}
 	tmp7.RegisterFlags(sub, c)
 	sub.PersistentFlags().BoolVar(&tmp7.PrettyPrint, "pp", false, "Pretty print response body")
@@ -403,16 +390,9 @@ func (cmd *UploadDatabindCommand) Run(c *client.Client, args []string) error {
 	} else {
 		path = "/api/databind/upload"
 	}
-	var payload client.UploadPayload
-	if cmd.Payload != "" {
-		err := json.Unmarshal([]byte(cmd.Payload), &payload)
-		if err != nil {
-			return fmt.Errorf("failed to deserialize payload: %s", err)
-		}
-	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)
-	resp, err := c.UploadDatabind(ctx, path, &payload)
+	resp, err := c.UploadDatabind(ctx, path)
 	if err != nil {
 		goa.LogError(ctx, "failed", "err", err)
 		return err
@@ -424,8 +404,6 @@ func (cmd *UploadDatabindCommand) Run(c *client.Client, args []string) error {
 
 // RegisterFlags registers the command flags with the command line.
 func (cmd *UploadDatabindCommand) RegisterFlags(cc *cobra.Command, c *client.Client) {
-	cc.Flags().StringVar(&cmd.Payload, "payload", "", "Request body encoded in JSON")
-	cc.Flags().StringVar(&cmd.ContentType, "content", "", "Request content type override, e.g. 'application/x-www-form-urlencoded'")
 }
 
 // Run makes the HTTP request corresponding to the PingMonitoringCommand command.

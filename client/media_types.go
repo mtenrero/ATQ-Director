@@ -5,14 +5,13 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package client
 
 import (
 	"github.com/goadesign/goa"
-	uuid "github.com/goadesign/goa/uuid"
 	"net/http"
 )
 
@@ -21,7 +20,7 @@ import (
 // Identifier: application/atq.databind.upload+json; view=default
 type AtqDatabindUpload struct {
 	// Upload ID
-	ID *uuid.UUID `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 }
 
 // User upload files response (error view)

@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package app
@@ -230,35 +230,6 @@ func (ut *TaskPayload) Validate() (err error) {
 		}
 	}
 	return
-}
-
-// uploadPayload user type.
-type uploadPayload struct {
-	// Zipped File
-	File interface{} `form:"file,omitempty" json:"file,omitempty" xml:"file,omitempty"`
-}
-
-// Validate validates the uploadPayload type instance.
-func (ut *uploadPayload) Validate() (err error) {
-	if ut.File == nil {
-		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "file"))
-	}
-	return
-}
-
-// Publicize creates UploadPayload from uploadPayload
-func (ut *uploadPayload) Publicize() *UploadPayload {
-	var pub UploadPayload
-	if ut.File != nil {
-		pub.File = ut.File
-	}
-	return &pub
-}
-
-// UploadPayload user type.
-type UploadPayload struct {
-	// Zipped File
-	File interface{} `form:"file" json:"file" xml:"file"`
 }
 
 // Definition of a command to be executed

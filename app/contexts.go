@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package app
@@ -69,7 +69,6 @@ type UploadDatabindContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	Payload *UploadPayload
 }
 
 // NewUploadDatabindContext parses the incoming request URL and body, performs validations and creates the

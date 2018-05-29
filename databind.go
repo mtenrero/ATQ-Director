@@ -1,6 +1,13 @@
 package main
 
 import (
+	"io"
+	"os"
+	"sync"
+	"time"
+
+	"strconv"
+
 	"github.com/goadesign/goa"
 	"github.com/mtenrero/ATQ-Director/app"
 )
@@ -8,11 +15,15 @@ import (
 // DatabindController implements the databind resource.
 type DatabindController struct {
 	*goa.Controller
+	*sync.Mutex
 }
 
 // NewDatabindController creates a databind controller.
 func NewDatabindController(service *goa.Service) *DatabindController {
-	return &DatabindController{Controller: service.NewController("DatabindController")}
+	return &DatabindController{
+		Controller: service.NewController("DatabindController"),
+		Mutex:      &sync.Mutex{},
+	}
 }
 
 // List runs the list action.
@@ -28,7 +39,71 @@ func (c *DatabindController) List(ctx *app.ListDatabindContext) error {
 
 // Upload runs the upload action.
 func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
-	// DatabindController_Upload: start_implement
+
+	reader, err := ctx.MultipartReader()
+
+	// Create files directory if doesn't exists
+	os.MkdirAll("./files", 0755)
+
+	// Reply with error message if errored
+	if err != nil {
+		errr := err.Error()
+		atqUploadError := app.AtqDatabindUploadError{
+			Error: &errr,
+		}
+		return ctx.UploadErrorError(&atqUploadError)
+	}
+
+	// Reply with error if multipart load not detected
+	if reader == nil {
+		errr := "The payload must be a Multipart request"
+		atqUploadError := app.AtqDatabindUploadError{
+			Error: &errr,
+		}
+		return ctx.UploadErrorError(&atqUploadError)
+	}
+
+	// Read Multipart file
+	for {
+		part, err := reader.NextPart()
+
+		// End reading if EOF
+		if err == io.EOF {
+			break
+		}
+
+		// Reply with error if error detected in current part
+		if err != nil {
+			errr := "Failed to load part: " + err.Error()
+			atqUploadError := app.AtqDatabindUploadError{
+				Error: &errr,
+			}
+			return ctx.UploadErrorError(&atqUploadError)
+		}
+
+		// Open file for later usage
+		file, fileErr := os.OpenFile("./files/"+part.FileName(), os.O_WRONLY|os.O_CREATE, 0666)
+		if fileErr != nil {
+			errr := fileErr.Error()
+			atqUploadError := app.AtqDatabindUploadError{
+				Error: &errr,
+			}
+			return ctx.UploadErrorError(&atqUploadError)
+		}
+
+		defer file.Close()
+
+		// Copy mulitpart readed file content into FileSystem
+		io.Copy(file, part)
+
+		timestampUID := time.Now().Unix()
+		timestampUIDString := strconv.Itoa(int(timestampUID))
+
+		atqUpload := app.AtqDatabindUpload{
+			ID: &timestampUIDString,
+		}
+		return ctx.OK(&atqUpload)
+	}
 
 	// Put your logic here
 

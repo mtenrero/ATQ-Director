@@ -5,13 +5,12 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package client
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"net/http"
@@ -54,8 +53,8 @@ func UploadDatabindPath() string {
 }
 
 // Upload new zipped file for later usage with a Task
-func (c *Client) UploadDatabind(ctx context.Context, path string, payload *UploadPayload) (*http.Response, error) {
-	req, err := c.NewUploadDatabindRequest(ctx, path, payload)
+func (c *Client) UploadDatabind(ctx context.Context, path string) (*http.Response, error) {
+	req, err := c.NewUploadDatabindRequest(ctx, path)
 	if err != nil {
 		return nil, err
 	}
@@ -63,22 +62,15 @@ func (c *Client) UploadDatabind(ctx context.Context, path string, payload *Uploa
 }
 
 // NewUploadDatabindRequest create the request corresponding to the upload action endpoint of the databind resource.
-func (c *Client) NewUploadDatabindRequest(ctx context.Context, path string, payload *UploadPayload) (*http.Request, error) {
-	var body bytes.Buffer
-	err := c.Encoder.Encode(payload, &body, "*/*")
-	if err != nil {
-		return nil, fmt.Errorf("failed to encode body: %s", err)
-	}
+func (c *Client) NewUploadDatabindRequest(ctx context.Context, path string) (*http.Request, error) {
 	scheme := c.Scheme
 	if scheme == "" {
 		scheme = "http"
 	}
 	u := url.URL{Host: c.Host, Scheme: scheme, Path: path}
-	req, err := http.NewRequest("POST", u.String(), &body)
+	req, err := http.NewRequest("POST", u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
-	header := req.Header
-	header.Set("Content-Type", "application/json")
 	return req, nil
 }

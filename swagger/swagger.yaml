@@ -5,12 +5,11 @@ definitions:
   AtqDatabindUpload:
     description: User upload files response (default view)
     example:
-      id: be37106b-89c8-44ae-9c66-a6929179dbea
+      id: Harum magni.
     properties:
       id:
         description: Upload ID
-        example: be37106b-89c8-44ae-9c66-a6929179dbea
-        format: uuid
+        example: Harum magni.
         type: string
     title: 'Mediatype identifier: application/atq.databind.upload+json; view=default'
     type: object
@@ -18,9 +17,9 @@ definitions:
     description: AtqDatabindUploadCollection is the media type for an array of AtqDatabindUpload
       (default view)
     example:
-    - id: be37106b-89c8-44ae-9c66-a6929179dbea
-    - id: be37106b-89c8-44ae-9c66-a6929179dbea
-    - id: be37106b-89c8-44ae-9c66-a6929179dbea
+    - id: Harum magni.
+    - id: Harum magni.
+    - id: Harum magni.
     items:
       $ref: '#/definitions/AtqDatabindUpload'
     title: 'Mediatype identifier: application/atq.databind.upload+json; type=collection;
@@ -99,10 +98,8 @@ definitions:
     example:
       alias: ALIAS
       args:
-      - Sed consequatur est suscipit sed consectetur est.
-      - Sed consequatur est suscipit sed consectetur est.
-      - Sed consequatur est suscipit sed consectetur est.
-      fileid: Rem blanditiis ut saepe rem.
+      - Excepturi voluptas sed consequatur est suscipit sed.
+      fileid: Est qui rem blanditiis ut saepe rem.
       image: hello-world
       replicas: 8.683131677292342e+17
       tty: true
@@ -114,17 +111,15 @@ definitions:
       args:
         description: Arguments to be passed to the container
         example:
-        - Sed consequatur est suscipit sed consectetur est.
-        - Sed consequatur est suscipit sed consectetur est.
-        - Sed consequatur est suscipit sed consectetur est.
+        - Excepturi voluptas sed consequatur est suscipit sed.
         items:
-          example: Sed consequatur est suscipit sed consectetur est.
+          example: Excepturi voluptas sed consequatur est suscipit sed.
           type: string
         type: array
       fileid:
         description: ID of the Zipped contents that will be mounted and accesible
           inside the container, PREVIOUSLY UPLOADED
-        example: Rem blanditiis ut saepe rem.
+        example: Est qui rem blanditiis ut saepe rem.
         type: string
       image:
         description: Docker base image to attach to Service
@@ -150,10 +145,8 @@ definitions:
       master:
         alias: ALIAS
         args:
-        - Sed consequatur est suscipit sed consectetur est.
-        - Sed consequatur est suscipit sed consectetur est.
-        - Sed consequatur est suscipit sed consectetur est.
-        fileid: Rem blanditiis ut saepe rem.
+        - Excepturi voluptas sed consequatur est suscipit sed.
+        fileid: Est qui rem blanditiis ut saepe rem.
         image: hello-world
         replicas: 8.683131677292342e+17
         tty: true
@@ -165,10 +158,8 @@ definitions:
       worker:
         alias: ALIAS
         args:
-        - Sed consequatur est suscipit sed consectetur est.
-        - Sed consequatur est suscipit sed consectetur est.
-        - Sed consequatur est suscipit sed consectetur est.
-        fileid: Rem blanditiis ut saepe rem.
+        - Excepturi voluptas sed consequatur est suscipit sed.
+        fileid: Est qui rem blanditiis ut saepe rem.
         image: hello-world
         replicas: 8.683131677292342e+17
         tty: true
@@ -194,17 +185,6 @@ definitions:
     - worker
     - master
     title: TaskPayload
-    type: object
-  UploadPayload:
-    example:
-      file: 3.658973351343644e+17
-    properties:
-      file:
-        description: Zipped File
-        example: 3.658973351343644e+17
-    required:
-    - file
-    title: UploadPayload
     type: object
   WaitCommand:
     description: Definition of a command to be executed
@@ -256,12 +236,6 @@ paths:
     post:
       description: Upload new zipped file for later usage with a Task
       operationId: databind#upload
-      parameters:
-      - in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/UploadPayload'
       produces:
       - application/atq.databind.upload+json
       responses:
