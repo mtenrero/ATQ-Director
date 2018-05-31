@@ -186,7 +186,6 @@ definitions:
       name:
         description: Task Name Identifier
         example: z4g
-        maxLength: 10
         minLength: 3
         type: string
       waitCommand:

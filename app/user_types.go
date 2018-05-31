@@ -160,11 +160,6 @@ func (ut *taskPayload) Validate() (err error) {
 			err = goa.MergeErrors(err, goa.InvalidLengthError(`request.name`, *ut.Name, utf8.RuneCountInString(*ut.Name), 3, true))
 		}
 	}
-	if ut.Name != nil {
-		if utf8.RuneCountInString(*ut.Name) > 10 {
-			err = goa.MergeErrors(err, goa.InvalidLengthError(`request.name`, *ut.Name, utf8.RuneCountInString(*ut.Name), 10, false))
-		}
-	}
 	if ut.Worker != nil {
 		if err2 := ut.Worker.Validate(); err2 != nil {
 			err = goa.MergeErrors(err, err2)
@@ -227,9 +222,6 @@ func (ut *TaskPayload) Validate() (err error) {
 	}
 	if utf8.RuneCountInString(ut.Name) < 3 {
 		err = goa.MergeErrors(err, goa.InvalidLengthError(`type.name`, ut.Name, utf8.RuneCountInString(ut.Name), 3, true))
-	}
-	if utf8.RuneCountInString(ut.Name) > 10 {
-		err = goa.MergeErrors(err, goa.InvalidLengthError(`type.name`, ut.Name, utf8.RuneCountInString(ut.Name), 10, false))
 	}
 	if ut.Worker != nil {
 		if err2 := ut.Worker.Validate(); err2 != nil {
