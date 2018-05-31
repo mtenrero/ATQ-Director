@@ -53,3 +53,19 @@ func (p *Persistance) delete(key string) error {
 
 	return err
 }
+
+// iterate returns the contents of a previos defined index
+func (p *Persistance) iterateStringString(index string) (*map[string]string, error) {
+	var collection map[string]string
+	collection = make(map[string]string)
+
+	err := p.DB.View(func(tx *buntdb.Tx) error {
+		tx.Ascend(index, func(dbkey, dbval string) bool {
+			collection[dbkey] = dbval
+			return true
+		})
+		return nil
+	})
+
+	return &collection, err
+}

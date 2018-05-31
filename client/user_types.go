@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package client
@@ -45,6 +45,8 @@ type servicePayload struct {
 	Alias *string `form:"alias,omitempty" json:"alias,omitempty" xml:"alias,omitempty"`
 	// Arguments to be passed to the container
 	Args []string `form:"args,omitempty" json:"args,omitempty" xml:"args,omitempty"`
+	// Environment variables list
+	Environment []string `form:"environment,omitempty" json:"environment,omitempty" xml:"environment,omitempty"`
 	// ID of the Zipped contents that will be mounted and accesible inside the container, PREVIOUSLY UPLOADED
 	Fileid *string `form:"fileid,omitempty" json:"fileid,omitempty" xml:"fileid,omitempty"`
 	// Docker base image to attach to Service
@@ -75,6 +77,9 @@ func (ut *servicePayload) Publicize() *ServicePayload {
 	if ut.Args != nil {
 		pub.Args = ut.Args
 	}
+	if ut.Environment != nil {
+		pub.Environment = ut.Environment
+	}
 	if ut.Fileid != nil {
 		pub.Fileid = ut.Fileid
 	}
@@ -96,6 +101,8 @@ type ServicePayload struct {
 	Alias string `form:"alias" json:"alias" xml:"alias"`
 	// Arguments to be passed to the container
 	Args []string `form:"args,omitempty" json:"args,omitempty" xml:"args,omitempty"`
+	// Environment variables list
+	Environment []string `form:"environment,omitempty" json:"environment,omitempty" xml:"environment,omitempty"`
 	// ID of the Zipped contents that will be mounted and accesible inside the container, PREVIOUSLY UPLOADED
 	Fileid *string `form:"fileid,omitempty" json:"fileid,omitempty" xml:"fileid,omitempty"`
 	// Docker base image to attach to Service
@@ -151,11 +158,6 @@ func (ut *taskPayload) Validate() (err error) {
 	if ut.Name != nil {
 		if utf8.RuneCountInString(*ut.Name) < 3 {
 			err = goa.MergeErrors(err, goa.InvalidLengthError(`request.name`, *ut.Name, utf8.RuneCountInString(*ut.Name), 3, true))
-		}
-	}
-	if ut.Name != nil {
-		if utf8.RuneCountInString(*ut.Name) > 10 {
-			err = goa.MergeErrors(err, goa.InvalidLengthError(`request.name`, *ut.Name, utf8.RuneCountInString(*ut.Name), 10, false))
 		}
 	}
 	if ut.Worker != nil {
@@ -221,44 +223,12 @@ func (ut *TaskPayload) Validate() (err error) {
 	if utf8.RuneCountInString(ut.Name) < 3 {
 		err = goa.MergeErrors(err, goa.InvalidLengthError(`type.name`, ut.Name, utf8.RuneCountInString(ut.Name), 3, true))
 	}
-	if utf8.RuneCountInString(ut.Name) > 10 {
-		err = goa.MergeErrors(err, goa.InvalidLengthError(`type.name`, ut.Name, utf8.RuneCountInString(ut.Name), 10, false))
-	}
 	if ut.Worker != nil {
 		if err2 := ut.Worker.Validate(); err2 != nil {
 			err = goa.MergeErrors(err, err2)
 		}
 	}
 	return
-}
-
-// uploadPayload user type.
-type uploadPayload struct {
-	// Zipped File
-	File interface{} `form:"file,omitempty" json:"file,omitempty" xml:"file,omitempty"`
-}
-
-// Validate validates the uploadPayload type instance.
-func (ut *uploadPayload) Validate() (err error) {
-	if ut.File == nil {
-		err = goa.MergeErrors(err, goa.MissingAttributeError(`request`, "file"))
-	}
-	return
-}
-
-// Publicize creates UploadPayload from uploadPayload
-func (ut *uploadPayload) Publicize() *UploadPayload {
-	var pub UploadPayload
-	if ut.File != nil {
-		pub.File = ut.File
-	}
-	return &pub
-}
-
-// UploadPayload user type.
-type UploadPayload struct {
-	// Zipped File
-	File interface{} `form:"file" json:"file" xml:"file"`
 }
 
 // Definition of a command to be executed

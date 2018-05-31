@@ -13,7 +13,7 @@ func TestLoadControllerConfigYaml(t *testing.T) {
 		t.Error(err)
 	}
 
-	assert.Equal(t, "9050", config.Port, "Port reading from YAML failed")
+	assert.Equal(t, "8080", config.Port, "Port reading from YAML failed")
 	assert.Equal(t, "mtenrero/jmeter", config.Images[0].Name, "Read Containers from YAML Failed!")
 }
 

@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package test
@@ -222,11 +222,11 @@ func ListDatabindOKError(t goatest.TInterface, ctx context.Context, service *goa
 	return rw, mt
 }
 
-// UploadDatabindOK runs the method Upload of the given controller with the given parameters and payload.
+// UploadDatabindOK runs the method Upload of the given controller with the given parameters.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UploadDatabindOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController, payload *app.UploadPayload) (http.ResponseWriter, *app.AtqDatabindUpload) {
+func UploadDatabindOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController) (http.ResponseWriter, *app.AtqDatabindUpload) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -267,7 +267,6 @@ func UploadDatabindOK(t goatest.TInterface, ctx context.Context, service *goa.Se
 		t.Errorf("unexpected parameter validation error: %+v", e)
 		return nil, nil
 	}
-	uploadCtx.Payload = payload
 
 	// Perform action
 	_err = ctrl.Upload(uploadCtx)
@@ -292,11 +291,11 @@ func UploadDatabindOK(t goatest.TInterface, ctx context.Context, service *goa.Se
 	return rw, mt
 }
 
-// UploadDatabindOKError runs the method Upload of the given controller with the given parameters and payload.
+// UploadDatabindOKError runs the method Upload of the given controller with the given parameters.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UploadDatabindOKError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController, payload *app.UploadPayload) (http.ResponseWriter, *app.AtqDatabindUploadError) {
+func UploadDatabindOKError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController) (http.ResponseWriter, *app.AtqDatabindUploadError) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -337,7 +336,6 @@ func UploadDatabindOKError(t goatest.TInterface, ctx context.Context, service *g
 		t.Errorf("unexpected parameter validation error: %+v", e)
 		return nil, nil
 	}
-	uploadCtx.Payload = payload
 
 	// Perform action
 	_err = ctrl.Upload(uploadCtx)
@@ -362,11 +360,11 @@ func UploadDatabindOKError(t goatest.TInterface, ctx context.Context, service *g
 	return rw, mt
 }
 
-// UploadDatabindTheFileDoesnTHaveAnAcceptedCompression runs the method Upload of the given controller with the given parameters and payload.
+// UploadDatabindTheFileDoesnTHaveAnAcceptedCompression runs the method Upload of the given controller with the given parameters.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UploadDatabindTheFileDoesnTHaveAnAcceptedCompression(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController, payload *app.UploadPayload) (http.ResponseWriter, *app.AtqDatabindUpload) {
+func UploadDatabindTheFileDoesnTHaveAnAcceptedCompression(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController) (http.ResponseWriter, *app.AtqDatabindUpload) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -407,7 +405,6 @@ func UploadDatabindTheFileDoesnTHaveAnAcceptedCompression(t goatest.TInterface, 
 		t.Errorf("unexpected parameter validation error: %+v", e)
 		return nil, nil
 	}
-	uploadCtx.Payload = payload
 
 	// Perform action
 	_err = ctrl.Upload(uploadCtx)
@@ -432,11 +429,11 @@ func UploadDatabindTheFileDoesnTHaveAnAcceptedCompression(t goatest.TInterface, 
 	return rw, mt
 }
 
-// UploadDatabindTheFileDoesnTHaveAnAcceptedCompressionError runs the method Upload of the given controller with the given parameters and payload.
+// UploadDatabindTheFileDoesnTHaveAnAcceptedCompressionError runs the method Upload of the given controller with the given parameters.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UploadDatabindTheFileDoesnTHaveAnAcceptedCompressionError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController, payload *app.UploadPayload) (http.ResponseWriter, *app.AtqDatabindUploadError) {
+func UploadDatabindTheFileDoesnTHaveAnAcceptedCompressionError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController) (http.ResponseWriter, *app.AtqDatabindUploadError) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -477,7 +474,6 @@ func UploadDatabindTheFileDoesnTHaveAnAcceptedCompressionError(t goatest.TInterf
 		t.Errorf("unexpected parameter validation error: %+v", e)
 		return nil, nil
 	}
-	uploadCtx.Payload = payload
 
 	// Perform action
 	_err = ctrl.Upload(uploadCtx)
@@ -502,11 +498,11 @@ func UploadDatabindTheFileDoesnTHaveAnAcceptedCompressionError(t goatest.TInterf
 	return rw, mt
 }
 
-// UploadDatabindUploadError runs the method Upload of the given controller with the given parameters and payload.
+// UploadDatabindUploadError runs the method Upload of the given controller with the given parameters.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UploadDatabindUploadError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController, payload *app.UploadPayload) (http.ResponseWriter, *app.AtqDatabindUpload) {
+func UploadDatabindUploadError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController) (http.ResponseWriter, *app.AtqDatabindUpload) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -547,7 +543,6 @@ func UploadDatabindUploadError(t goatest.TInterface, ctx context.Context, servic
 		t.Errorf("unexpected parameter validation error: %+v", e)
 		return nil, nil
 	}
-	uploadCtx.Payload = payload
 
 	// Perform action
 	_err = ctrl.Upload(uploadCtx)
@@ -572,11 +567,11 @@ func UploadDatabindUploadError(t goatest.TInterface, ctx context.Context, servic
 	return rw, mt
 }
 
-// UploadDatabindUploadErrorError runs the method Upload of the given controller with the given parameters and payload.
+// UploadDatabindUploadErrorError runs the method Upload of the given controller with the given parameters.
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func UploadDatabindUploadErrorError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController, payload *app.UploadPayload) (http.ResponseWriter, *app.AtqDatabindUploadError) {
+func UploadDatabindUploadErrorError(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.DatabindController) (http.ResponseWriter, *app.AtqDatabindUploadError) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -617,7 +612,6 @@ func UploadDatabindUploadErrorError(t goatest.TInterface, ctx context.Context, s
 		t.Errorf("unexpected parameter validation error: %+v", e)
 		return nil, nil
 	}
-	uploadCtx.Payload = payload
 
 	// Perform action
 	_err = ctrl.Upload(uploadCtx)

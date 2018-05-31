@@ -23,6 +23,17 @@ func RemoveService(serviceID string) error {
 	return client.ServiceRemove(context.Background(), serviceID)
 }
 
+// globalService returns a Global Service Mode
+func globalService() *swarm.ServiceMode {
+	global := swarm.GlobalService{}
+	serviceMode := swarm.ServiceMode{
+		Replicated: nil,
+		Global:     &global,
+	}
+
+	return &serviceMode
+}
+
 // replicatedService returns a Service Mode configurated with the given replicas amount
 func replicatedService(replicas int) *swarm.ServiceMode {
 	ureplicas := uint64(replicas)
@@ -76,4 +87,25 @@ func ServiceDetails(serviceID string) (*swarm.Service, error) {
 		return nil, err
 	}
 	return &serviceInspect, nil
+}
+
+// ServiceAttachedNetworkID finds the network attached to a Service and return its attached netwrok
+func ServiceAttachedNetworkID(serviceID string) (*string, error) {
+
+	endpoint, err := ServiceVIPS(serviceID)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(*endpoint) != 1 {
+		return nil, err
+	}
+
+	var networkID string
+
+	for _, vip := range *endpoint {
+		networkID = vip.NetworkID
+	}
+
+	return &networkID, nil
 }

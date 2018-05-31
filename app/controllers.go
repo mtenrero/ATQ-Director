@@ -5,7 +5,7 @@
 // Command:
 // $ goagen
 // --design=github.com/mtenrero/ATQ-Director/http/design
-// --out=$(GOPATH)\src\github.com\mtenrero\ATQ-Director
+// --out=$(GOPATH)/src/github.com/mtenrero/ATQ-Director
 // --version=v1.3.1
 
 package app
@@ -64,31 +64,10 @@ func MountDatabindController(service *goa.Service, ctrl DatabindController) {
 		if err != nil {
 			return err
 		}
-		// Build the payload
-		if rawPayload := goa.ContextRequest(ctx).Payload; rawPayload != nil {
-			rctx.Payload = rawPayload.(*UploadPayload)
-		} else {
-			return goa.MissingPayloadError()
-		}
 		return ctrl.Upload(rctx)
 	}
-	service.Mux.Handle("POST", "/api/databind/upload", ctrl.MuxHandler("upload", h, unmarshalUploadDatabindPayload))
+	service.Mux.Handle("POST", "/api/databind/upload", ctrl.MuxHandler("upload", h, nil))
 	service.LogInfo("mount", "ctrl", "Databind", "action", "Upload", "route", "POST /api/databind/upload")
-}
-
-// unmarshalUploadDatabindPayload unmarshals the request body into the context request data Payload field.
-func unmarshalUploadDatabindPayload(ctx context.Context, service *goa.Service, req *http.Request) error {
-	payload := &uploadPayload{}
-	if err := service.DecodeRequest(req, payload); err != nil {
-		return err
-	}
-	if err := payload.Validate(); err != nil {
-		// Initialize payload with private data structure so it can be logged
-		goa.ContextRequest(ctx).Payload = payload
-		return err
-	}
-	goa.ContextRequest(ctx).Payload = payload.Publicize()
-	return nil
 }
 
 // MonitoringController is the controller interface for the Monitoring actions.

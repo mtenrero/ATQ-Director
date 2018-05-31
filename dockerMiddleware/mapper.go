@@ -1,6 +1,8 @@
 package dockerMiddleware
 
 import (
+	"strings"
+
 	"docker.io/go-docker/api/types"
 	"docker.io/go-docker/api/types/mount"
 	"docker.io/go-docker/api/types/swarm"
@@ -18,6 +20,8 @@ func ContainerSpecMapper(serviceImage *atqTypes.ServiceImage, alias string, moun
 		TTY:    serviceImage.TTY,
 		Mounts: mounts,
 		Labels: aliasMap,
+		Args:   serviceImage.Args,
+		Env:    serviceImage.Environment,
 	}
 
 	return &spec
@@ -66,17 +70,36 @@ func CreateNetworkMap(alias string) (*swarm.NetworkAttachmentConfig, error) {
 	return &networkAttachConfig, netError
 }
 
+// AttachNetworkMap creates a networkAttachmentConfig with the existing specified network
+func AttachNetworkMap(alias string, networkID string) *swarm.NetworkAttachmentConfig {
+	aliases := []string{alias}
+
+	networkAttachConfig := swarm.NetworkAttachmentConfig{
+		Target:  networkID,
+		Aliases: aliases,
+	}
+
+	return &networkAttachConfig
+}
+
 // ComposeService Maps the values to a new service
-func ComposeService(serviceImage *atqTypes.ServiceImage, globalAlias, alias string, path *string, mode *swarm.ServiceMode) (*types.ServiceCreateResponse, error) {
+func ComposeService(serviceImage *atqTypes.ServiceImage, globalAlias, alias string, path *string, mode *swarm.ServiceMode, networkID *string) (*types.ServiceCreateResponse, error) {
 
 	mounts := CreateMounts(path, alias)
 
 	containerSpec := ContainerSpecMapper(serviceImage, alias, mounts)
 
-	networkSpec, netError := CreateNetworkMap(globalAlias)
+	var networkSpec *swarm.NetworkAttachmentConfig
 
-	if netError != nil {
-		return nil, netError
+	if networkID != nil {
+		networkSpec = AttachNetworkMap(globalAlias, *networkID)
+	} else {
+		var netError error
+		networkSpec, netError = CreateNetworkMap(globalAlias)
+
+		if netError != nil {
+			return nil, netError
+		}
 	}
 
 	task := TaskSpecMapper(containerSpec, []swarm.NetworkAttachmentConfig{*networkSpec})
@@ -93,9 +116,34 @@ func ComposeService(serviceImage *atqTypes.ServiceImage, globalAlias, alias stri
 		serviceMode = *mode
 	}
 
+	var endpointSpec swarm.EndpointSpec
+
+	if !strings.Contains(alias, "DISCOVER") {
+		endpointSpec = swarm.EndpointSpec{
+			Mode: "dnsrr",
+		}
+	} else {
+		var ports []swarm.PortConfig
+		port := swarm.PortConfig{
+			Name:          "discovery",
+			Protocol:      "tcp",
+			TargetPort:    9090,
+			PublishedPort: 9090,
+			PublishMode:   swarm.PortConfigPublishModeHost,
+		}
+
+		ports = append(ports, port)
+
+		endpointSpec = swarm.EndpointSpec{
+			Mode:  "vip",
+			Ports: ports,
+		}
+	}
+
 	serviceSpec := swarm.ServiceSpec{
 		Annotations:  annotations,
 		TaskTemplate: *task,
+		EndpointSpec: &endpointSpec,
 		Mode:         serviceMode,
 	}
 

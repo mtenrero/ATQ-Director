@@ -26,6 +26,9 @@ func InitPersistance(path string) (*Persistance, error) {
 		DB: db,
 	}
 
+	// Initialize indexes
+	persistance.indexFile()
+
 	return &persistance, nil
 }
 

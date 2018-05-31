@@ -4,21 +4,26 @@ import (
 	"github.com/goadesign/goa"
 	"github.com/mtenrero/ATQ-Director/app"
 	"github.com/mtenrero/ATQ-Director/dockerMiddleware"
+	"github.com/mtenrero/ATQ-Director/persistance"
 )
 
 // TaskController implements the task resource.
 type TaskController struct {
 	*goa.Controller
+	*persistance.Persistance
 }
 
 // NewTaskController creates a task controller.
-func NewTaskController(service *goa.Service) *TaskController {
-	return &TaskController{Controller: service.NewController("TaskController")}
+func NewTaskController(service *goa.Service, persistance *persistance.Persistance) *TaskController {
+	return &TaskController{
+		Controller:  service.NewController("TaskController"),
+		Persistance: persistance,
+	}
 }
 
 // Create runs the create action.
 func (c *TaskController) Create(ctx *app.CreateTaskContext) error {
-	task, err := dockerMiddleware.TaskMasterWorker(ctx.Payload)
+	task, err := dockerMiddleware.TaskMasterWorker(ctx.Payload, c.Persistance)
 	if err != nil {
 		errr := err.Error()
 		errorResponse := app.AtqTask{

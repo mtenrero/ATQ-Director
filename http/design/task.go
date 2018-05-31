@@ -65,7 +65,6 @@ var TaskPayload = Type("TaskPayload", func() {
 	Attribute("name", String, func() {
 		Description("Task Name Identifier")
 		MinLength(3)
-		MaxLength(10)
 	})
 	Attribute("master", ServicePayload)
 	Attribute("worker", ServicePayload)
