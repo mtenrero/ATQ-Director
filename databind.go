@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -88,8 +89,20 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 			return ctx.UploadErrorError(&atqUploadError)
 		}
 
-		// Open file for later usage
 		fileName := part.FileName()
+
+		// Ensure file extension
+		isNotZip := ensureZip(fileName)
+		if isNotZip != nil {
+			errr := isNotZip.Error()
+			atqNotZip := app.AtqDatabindUploadError{
+				Error: &errr,
+			}
+
+			return ctx.TheFileDoesnTHaveAnAcceptedCompressionError(&atqNotZip)
+		}
+
+		// Open file for later usage
 		file, fileErr := os.OpenFile("./files/"+fileName, os.O_WRONLY|os.O_CREATE, 0666)
 		if fileErr != nil {
 			errr := fileErr.Error()
@@ -140,4 +153,15 @@ func parseDatabind(collection *map[string]string) app.AtqDatabindUploadCollectio
 	}
 
 	return typeCollection
+}
+
+func ensureZip(fileName string) error {
+
+	var extension = filepath.Ext(fileName)
+
+	if extension != ".zip" {
+		return errors.New("The uploaded file is not a ZIP file")
+	}
+
+	return nil
 }
