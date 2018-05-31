@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"github.com/goadesign/goa"
+	"github.com/mholt/archiver"
 	"github.com/mtenrero/ATQ-Director/app"
 	"github.com/mtenrero/ATQ-Director/persistance"
 )
@@ -112,16 +113,33 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 			return ctx.UploadErrorError(&atqUploadError)
 		}
 
+		// Ensure file is closed if error occurred
 		defer file.Close()
 
 		// Copy mulitpart readed file content into FileSystem
 		io.Copy(file, part)
 
+		file.Close()
+
 		timestampUID := time.Now().Unix()
 		timestampUIDString := strconv.Itoa(int(timestampUID))
 
+		// Unzip File
+		directory, err := unzip(fileName, timestampUIDString)
+		if err != nil {
+			errr := err.Error()
+			atqError := app.AtqDatabindUploadError{
+				Error: &errr,
+			}
+
+			ctx.UploadErrorError(&atqError)
+		}
+
+		// Delete Original file
+		deleteFile(fileName)
+
 		// Save File to datastore
-		fullPath, _ := filepath.Abs("./files/" + fileName)
+		fullPath, _ := filepath.Abs("./files/" + directory)
 		saveFileToDatastore(timestampUIDString, fullPath, c.Persistance)
 
 		atqUpload := app.AtqDatabindUpload{
@@ -164,4 +182,18 @@ func ensureZip(fileName string) error {
 	}
 
 	return nil
+}
+
+func unzip(fileName, fileID string) (string, error) {
+	input := "./files/" + fileName
+	output := "./files/" + fileID
+	err := archiver.Zip.Open(input, output)
+
+	return output, err
+}
+
+func deleteFile(fileName string) error {
+	file := "./files/" + fileName
+	err := os.Remove(file)
+	return err
 }
