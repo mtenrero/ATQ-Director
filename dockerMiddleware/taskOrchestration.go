@@ -65,7 +65,10 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 		return nil, err
 	}
 
-	master, err = InitService(Master, task.Name, task.Master, discovererNetworkID)
+	// Inject Worker Service VIPs into an Environment variable
+	newService, err := injectVIPsIntoService(task.Name, task.Worker.Alias, task.Master)
+
+	master, err = InitService(Master, task.Name, newService, discovererNetworkID)
 	if err != nil {
 		return nil, err
 	}

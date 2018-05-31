@@ -3,7 +3,10 @@ package dockerMiddleware
 import (
 	"errors"
 	"log"
+	"strings"
 	"time"
+
+	"github.com/mtenrero/ATQ-Director/app"
 
 	"github.com/mtenrero/ATQ-Director/dnsdiscovery"
 )
@@ -78,4 +81,19 @@ func VIPSWaiter(globalAlias, serviceName string, replicas int, timeout int) erro
 			}
 		}
 	}
+}
+
+func injectVIPsIntoService(globalAlias, serviceName string, service *app.ServicePayload) (*app.ServicePayload, error) {
+	vips, err := dnsdiscovery.Discovery("http://localhost:9090/api/", globalAlias+"_"+serviceName+"WORKER")
+	if err != nil {
+		return nil, err
+	}
+
+	newService := *service
+
+	csvVips := strings.Join(*vips, ",")
+
+	newService.Environment = append(newService.Environment, "WORKER_CSV_VIPS="+csvVips)
+
+	return &newService, nil
 }
