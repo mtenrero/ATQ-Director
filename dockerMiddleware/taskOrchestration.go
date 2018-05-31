@@ -2,9 +2,6 @@ package dockerMiddleware
 
 import (
 	"errors"
-	"time"
-
-	"log"
 
 	"github.com/mtenrero/ATQ-Director/persistance"
 
@@ -36,6 +33,12 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 		return nil, err
 	}
 
+	// Wait until service up & running
+	err = ServiceHostWaiter(*discoverer.ID, 1, GlobalTimeoutSeconds)
+	if err != nil {
+		return nil, err
+	}
+
 	// Obtain Service Attached Network
 	discovererNetworkID, err := ServiceAttachedNetworkID(*discoverer.ID)
 	if err != nil {
@@ -49,7 +52,7 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 	}
 
 	// Wait until service upstart
-	errWaiting := VIPSWaiter(*worker.ID, *task.Worker.Replicas, GlobalTimeoutSeconds)
+	errWaiting := VIPSWaiter(task.Name, task.Worker.Alias, *task.Worker.Replicas, GlobalTimeoutSeconds)
 	if err != nil {
 		return nil, errWaiting
 	}
@@ -68,9 +71,15 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 	}
 
 	// Wait until service upstart
-	errWaiting = VIPSWaiter(*worker.ID, *task.Worker.Replicas+*task.Master.Replicas, GlobalTimeoutSeconds)
+	errWaiting = VIPSWaiter(task.Name, task.Master.Alias, *task.Master.Replicas, GlobalTimeoutSeconds)
 	if err != nil {
 		return nil, errWaiting
+	}
+
+	// Delete DISCOVERY Service
+	err = RemoveService(*discoverer.ID)
+	if err != nil {
+		return nil, err
 	}
 
 	// Register Master in the Datastore
@@ -154,49 +163,9 @@ func InitDiscoverer(globalAlias string) (*app.AtqService, error) {
 // WorkerHealthchecks runs the given healthchecks in a Service to ensure all worker containers are ready for use
 func WorkerHealthchecks(containerID string, replicas int, timeoutSeconds int) error {
 
-	err := VIPSWaiter(containerID, replicas, timeoutSeconds)
-	if err != nil {
-		return err
-	}
+	//err := VIPSWaiter(containerID, replicas, timeoutSeconds)
+	//if err != nil {
+	//	return err
+	//}
 	return nil
-}
-
-// VIPSWaiter await for a given amount of VIPS specified in the parameter.
-// Timeout in seconds
-func VIPSWaiter(serviceID string, replicas int, timeout int) error {
-
-	var vipsExpected = replicas
-
-	timeoutchan := time.After(time.Duration(timeout) * time.Second)
-	tick := time.Tick(500 * time.Millisecond)
-
-	for {
-		select {
-		case <-timeoutchan:
-			return errors.New("Timed out waiting for all VIPS. Containers are not ready")
-		case <-tick:
-			log.Println("tick")
-			// Obtain Service Attached Network
-			networkID, err := ServiceAttachedNetworkID(serviceID)
-			if err != nil {
-				return err
-			}
-
-			log.Println(*networkID)
-
-			if networkID != nil {
-				vips, err := NetworkVIPs(*networkID)
-				if err != nil {
-					return err
-				}
-
-				vipsAmount := len(*vips)
-				log.Println(vipsAmount)
-
-				if vipsAmount == vipsExpected {
-					return nil
-				}
-			}
-		}
-	}
 }
