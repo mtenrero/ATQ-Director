@@ -54,31 +54,28 @@ func ServiceHostWaiter(serviceID string, replicas int, timeout int) error {
 
 // VIPSWaiter await for a given amount of VIPS specified in the parameter.
 // Timeout in seconds
-func VIPSWaiter(globalAlias, serviceName string, replicas int, timeout int) error {
+func VIPSWaiter(globalAlias, serviceName string, replicas int, timeout int, service Service) error {
 
 	var vipsExpected = replicas
 
-	timeoutchan := time.After(time.Duration(timeout) * time.Second)
 	tick := time.Tick(500 * time.Millisecond)
+
+	timer := time.NewTimer(time.Duration(timeout) * time.Second)
+	defer timer.Stop()
 
 	for {
 		select {
-		case <-timeoutchan:
-			return errors.New("Timed out waiting for all VIPS. Containers are not ready")
 		case <-tick:
-			log.Println("tick")
-			// Obtain Service Attached Network
-			vips, err := dnsdiscovery.Discovery("http://localhost:9090/api/", globalAlias+"_"+serviceName+"WORKER")
-			if err != nil {
-				return err
-			}
+			vips, _ := dnsdiscovery.Discovery("http://localhost:9090/api/", globalAlias+"_"+serviceName+service.Name())
 
 			vipsAmount := len(*vips)
-			log.Println(vipsAmount)
 
 			if vipsAmount == vipsExpected {
 				return nil
 			}
+
+		case <-timer.C:
+			return errors.New("Timed out waiting for all VIPS. Containers are not ready")
 		}
 	}
 }

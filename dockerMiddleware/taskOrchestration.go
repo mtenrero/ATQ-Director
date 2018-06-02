@@ -52,8 +52,8 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 	}
 
 	// Wait until service upstart
-	errWaiting := VIPSWaiter(task.Name, task.Worker.Alias, *task.Worker.Replicas, GlobalTimeoutSeconds)
-	if err != nil {
+	errWaiting := VIPSWaiter(task.Name, task.Worker.Alias, *task.Worker.Replicas, GlobalTimeoutSeconds, Worker)
+	if errWaiting != nil {
 		return nil, errWaiting
 	}
 
@@ -74,8 +74,8 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 	}
 
 	// Wait until service upstart
-	errWaiting = VIPSWaiter(task.Name, task.Master.Alias, *task.Master.Replicas, GlobalTimeoutSeconds)
-	if err != nil {
+	errWaiting = VIPSWaiter(task.Name, task.Master.Alias, *task.Master.Replicas, GlobalTimeoutSeconds, Master)
+	if errWaiting != nil {
 		return nil, errWaiting
 	}
 
