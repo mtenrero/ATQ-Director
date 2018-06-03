@@ -3,7 +3,7 @@ package persistance
 import "testing"
 
 func TestDeleteNotExists(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath)
+	p, err := InitPersistance(TestingDBPath, ".")
 	if err != nil {
 		t.Error(err)
 	}
@@ -16,7 +16,7 @@ func TestDeleteNotExists(t *testing.T) {
 }
 
 func TestStoreDuplicatedKey(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath)
+	p, err := InitPersistance(TestingDBPath, ".")
 	if err != nil {
 		t.Error(err)
 	}

@@ -52,7 +52,7 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 	reader, err := ctx.MultipartReader()
 
 	// Create files directory if doesn't exists
-	os.MkdirAll("./files", 0755)
+	os.MkdirAll(c.Persistance.GlusterPath+"/files", 0755)
 
 	// Reply with error message if errored
 	if err != nil {
@@ -104,7 +104,7 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 		}
 
 		// Open file for later usage
-		file, fileErr := os.OpenFile("./files/"+fileName, os.O_WRONLY|os.O_CREATE, 0666)
+		file, fileErr := os.OpenFile(c.Persistance.GlusterPath+"/files/"+fileName, os.O_WRONLY|os.O_CREATE, 0666)
 		if fileErr != nil {
 			errr := fileErr.Error()
 			atqUploadError := app.AtqDatabindUploadError{
@@ -139,7 +139,7 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 		deleteFile(fileName)
 
 		// Save File to datastore
-		fullPath, _ := filepath.Abs("./files/" + directory)
+		fullPath, _ := filepath.Abs(c.Persistance.GlusterPath + "/files/" + directory)
 		saveFileToDatastore(timestampUIDString, fullPath, c.Persistance)
 
 		atqUpload := app.AtqDatabindUpload{

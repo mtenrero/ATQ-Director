@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const TestingDBPath = "./storage/dev_testing.atq"
+const TestingDBPath = "/storage/dev_testing.atq"
 
 func TestBasicDatastore(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath)
+	p, err := InitPersistance(TestingDBPath, ".")
 	if err != nil {
 		t.Error(err)
 	}

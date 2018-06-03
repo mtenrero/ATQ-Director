@@ -8,7 +8,7 @@ import (
 func TestFirstRun(t *testing.T) {
 	os.RemoveAll("./storage")
 
-	p, err := InitPersistance(TestingDBPath)
+	p, err := InitPersistance(TestingDBPath, ".")
 
 	if err != nil {
 		t.Error(err)

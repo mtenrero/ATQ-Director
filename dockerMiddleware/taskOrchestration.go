@@ -46,7 +46,7 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 	}
 
 	// Init Worker Service
-	worker, err = InitService(Worker, task.Name, task.Worker, discovererNetworkID)
+	worker, err = InitService(Worker, task.Name, task.Worker, discovererNetworkID, persistance)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 	// Inject Worker Service VIPs into an Environment variable
 	newService, err := injectVIPsIntoService(task.Name, task.Worker.Alias, task.Master)
 
-	master, err = InitService(Master, task.Name, newService, discovererNetworkID)
+	master, err = InitService(Master, task.Name, newService, discovererNetworkID, persistance)
 	if err != nil {
 		return nil, err
 	}
@@ -103,12 +103,17 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 }
 
 // InitService initializes the service
-func InitService(serviceType Service, globalAlias string, service *app.ServicePayload, networkID *string) (*app.AtqService, error) {
+func InitService(serviceType Service, globalAlias string, service *app.ServicePayload, networkID *string, persistance *persistance.Persistance) (*app.AtqService, error) {
 
 	var workerBaseAlias = globalAlias + "_" + service.Alias + serviceType.Name()
-	var volumeBindPath = service.Fileid
+	var volumeBindPath *string
 	var serviceCreateResponse *dockerTypes.ServiceCreateResponse
 	var err error
+
+	if service.Fileid != nil {
+		fullpath := persistance.GlusterPath + "/files/" + *service.Fileid
+		volumeBindPath = &fullpath
+	}
 
 	serviceImage := types.ServiceImage{
 		ImageName:   service.Image,
