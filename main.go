@@ -15,7 +15,7 @@ import (
 // Persistance is the Global Persistance Instance
 var Persistance *persistance.Persistance
 
-const persistancePath = "./storage/datastore.atq"
+const persistancePath = "/storage/datastore.atq"
 
 func main() {
 	// Create service

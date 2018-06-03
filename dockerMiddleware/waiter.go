@@ -91,6 +91,7 @@ func injectVIPsIntoService(globalAlias, serviceName string, service *app.Service
 	csvVips := strings.Join(*vips, ",")
 
 	newService.Environment = append(newService.Environment, "WORKER_CSV_VIPS="+csvVips)
+	newService.Environment = append(newService.Environment, "REMOTES="+csvVips)
 
 	return &newService, nil
 }

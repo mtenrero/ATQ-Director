@@ -33,6 +33,7 @@ func TaskSpecMapper(containerSpec *swarm.ContainerSpec, networkAttachConfig []sw
 	return &swarm.TaskSpec{
 		ContainerSpec: containerSpec,
 		Networks:      networkAttachConfig,
+		RestartPolicy: restartPolicyNone(),
 	}
 
 }
