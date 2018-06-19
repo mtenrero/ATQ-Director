@@ -41,7 +41,7 @@ pipeline {
             }
             
             steps {
-                sh 'cd $GOPATH/src/github.com/mtenrero/ATQ-Director && goveralls -repotoken $COVERTOKEN'
+                sh 'cd $GOPATH/src/github.com/mtenrero/ATQ-Director && goveralls -coverprofile=coverage.txt -repotoken $COVERTOKEN'
             }
         }
 
