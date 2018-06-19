@@ -35,6 +35,16 @@ pipeline {
             }
         }
 
+        stage('Code Coverage') {
+            environment { 
+                COVERTOKEN = credentials('coveralls-token') 
+            }
+            
+            steps {
+                sh 'cd $GOPATH/src/github.com/mtenrero/ATQ-Director && goveralls -repotoken $COVERTOKEN'
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'cd $GOPATH/src/github.com/mtenrero/ATQ-Director && ./build.sh'
