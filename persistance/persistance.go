@@ -27,6 +27,7 @@ func InitPersistance(path string, glusterPath string) (*Persistance, error) {
 
 	// Initialize indexes
 	persistance.indexFile()
+	persistance.IndexTask()
 
 	return &persistance, nil
 }
