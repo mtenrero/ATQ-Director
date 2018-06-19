@@ -24,3 +24,9 @@ func TestLoadControllerConfigYamlFileErr(t *testing.T) {
 		t.Log(err)
 	}
 }
+
+func TestLoadControllerMalformedYaml(t *testing.T) {
+	_, err := LoadControllerConfigYaml("../Gopkg.toml")
+
+	assert.Error(t, err, "Error not fired reading malformed yaml")
+}
