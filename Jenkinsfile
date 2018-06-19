@@ -46,6 +46,7 @@ pipeline {
         }
 
         stage('Build') {
+            when { expression { env.BRANCH_NAME == 'master' } }
             steps {
                 sh 'cd $GOPATH/src/github.com/mtenrero/ATQ-Director && ./build.sh'
             }
