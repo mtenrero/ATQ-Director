@@ -19,7 +19,7 @@ pipeline {
                 sh 'go get -u github.com/golang/lint/golint'
                 sh 'go get -u github.com/tebeka/go2xunit'
                 sh 'go get -u golang.org/x/tools/cmd/cover'
-                sh 'go get -u github.com/mattn/goveralls'
+                sh 'go get -u github.com/mtenrero/goveralls'
             }
         }
 
