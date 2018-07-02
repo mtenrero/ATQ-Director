@@ -52,7 +52,7 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 	reader, err := ctx.MultipartReader()
 
 	// Create files directory if doesn't exists
-	os.MkdirAll(c.Persistance.GlusterPath+"/files", 0755)
+	err = os.MkdirAll(c.Persistance.GlusterPath+"/files", 0777)
 
 	// Reply with error message if errored
 	if err != nil {
@@ -125,7 +125,7 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 		timestampUIDString := strconv.Itoa(int(timestampUID))
 
 		// Unzip File
-		directory, err := unzip(fileName, timestampUIDString)
+		directory, err := unzip(c.Persistance.GlusterPath, fileName, timestampUIDString)
 		if err != nil {
 			errr := err.Error()
 			atqError := app.AtqDatabindUploadError{
@@ -184,9 +184,9 @@ func ensureZip(fileName string) error {
 	return nil
 }
 
-func unzip(fileName, fileID string) (string, error) {
-	input := "./files/" + fileName
-	output := "./files/" + fileID
+func unzip(glusterPath, fileName, fileID string) (string, error) {
+	input := glusterPath + "/files/" + fileName
+	output := glusterPath + "/files/" + fileID
 	err := archiver.Zip.Open(input, output)
 
 	return output, err
