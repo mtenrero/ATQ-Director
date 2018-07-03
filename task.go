@@ -48,8 +48,14 @@ func (c *TaskController) Delete(ctx *app.DeleteTaskContext) error {
 
 // Inspect runs the inspect action.
 func (c *TaskController) Inspect(ctx *app.InspectTaskContext) error {
+	status, err := c.Persistance.ReadTask(ctx.ID)
+
+	if err != nil {
+		return ctx.TaskNotIdentified()
+	}
 
 	res := &app.AtqTask{}
+	res.ID = &ctx.ID
+	res.Status = status.Status
 	return ctx.OK(res)
-	// TaskController_Inspect: end_implement
 }
