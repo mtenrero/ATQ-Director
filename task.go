@@ -48,9 +48,6 @@ func (c *TaskController) Delete(ctx *app.DeleteTaskContext) error {
 
 // Inspect runs the inspect action.
 func (c *TaskController) Inspect(ctx *app.InspectTaskContext) error {
-	// TaskController_Inspect: start_implement
-
-	// Put your logic here
 
 	res := &app.AtqTask{}
 	return ctx.OK(res)

@@ -13,7 +13,6 @@ package app
 import (
 	"context"
 	"github.com/goadesign/goa"
-	uuid "github.com/satori/go.uuid"
 	"net/http"
 )
 
@@ -287,7 +286,7 @@ type InspectTaskContext struct {
 	context.Context
 	*goa.ResponseData
 	*goa.RequestData
-	ID uuid.UUID
+	ID string
 }
 
 // NewInspectTaskContext parses the incoming request URL and body, performs validations and creates the
@@ -302,11 +301,7 @@ func NewInspectTaskContext(ctx context.Context, r *http.Request, service *goa.Se
 	paramID := req.Params["id"]
 	if len(paramID) > 0 {
 		rawID := paramID[0]
-		if id, err2 := uuid.FromString(rawID); err2 == nil {
-			rctx.ID = id
-		} else {
-			err = goa.MergeErrors(err, goa.InvalidParamTypeError("id", rawID, "uuid"))
-		}
+		rctx.ID = rawID
 	}
 	return &rctx, err
 }

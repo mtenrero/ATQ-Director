@@ -14,7 +14,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	uuid "github.com/goadesign/goa/uuid"
 	"net/http"
 	"net/url"
 )
@@ -86,8 +85,8 @@ func (c *Client) NewDeleteTaskRequest(ctx context.Context, path string) (*http.R
 }
 
 // InspectTaskPath computes a request path to the inspect action of task.
-func InspectTaskPath(id uuid.UUID) string {
-	param0 := id.String()
+func InspectTaskPath(id string) string {
+	param0 := id
 
 	return fmt.Sprintf("/api/task/%s", param0)
 }
