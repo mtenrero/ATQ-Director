@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -10,6 +11,7 @@ import (
 	"strconv"
 
 	"github.com/goadesign/goa"
+	"github.com/mholt/archiver"
 	"github.com/mtenrero/ATQ-Director/app"
 	"github.com/mtenrero/ATQ-Director/persistance"
 )
@@ -50,7 +52,7 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 	reader, err := ctx.MultipartReader()
 
 	// Create files directory if doesn't exists
-	os.MkdirAll("./files", 0755)
+	err = os.MkdirAll(c.Persistance.GlusterPath+"/files", 0777)
 
 	// Reply with error message if errored
 	if err != nil {
@@ -88,9 +90,21 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 			return ctx.UploadErrorError(&atqUploadError)
 		}
 
-		// Open file for later usage
 		fileName := part.FileName()
-		file, fileErr := os.OpenFile("./files/"+fileName, os.O_WRONLY|os.O_CREATE, 0666)
+
+		// Ensure file extension
+		isNotZip := ensureZip(fileName)
+		if isNotZip != nil {
+			errr := isNotZip.Error()
+			atqNotZip := app.AtqDatabindUploadError{
+				Error: &errr,
+			}
+
+			return ctx.TheFileDoesnTHaveAnAcceptedCompressionError(&atqNotZip)
+		}
+
+		// Open file for later usage
+		file, fileErr := os.OpenFile(c.Persistance.GlusterPath+"/files/"+fileName, os.O_WRONLY|os.O_CREATE, 0666)
 		if fileErr != nil {
 			errr := fileErr.Error()
 			atqUploadError := app.AtqDatabindUploadError{
@@ -99,16 +113,33 @@ func (c *DatabindController) Upload(ctx *app.UploadDatabindContext) error {
 			return ctx.UploadErrorError(&atqUploadError)
 		}
 
+		// Ensure file is closed if error occurred
 		defer file.Close()
 
 		// Copy mulitpart readed file content into FileSystem
 		io.Copy(file, part)
 
+		file.Close()
+
 		timestampUID := time.Now().Unix()
 		timestampUIDString := strconv.Itoa(int(timestampUID))
 
+		// Unzip File
+		directory, err := unzip(c.Persistance.GlusterPath, fileName, timestampUIDString)
+		if err != nil {
+			errr := err.Error()
+			atqError := app.AtqDatabindUploadError{
+				Error: &errr,
+			}
+
+			ctx.UploadErrorError(&atqError)
+		}
+
+		// Delete Original file
+		deleteFile(fileName)
+
 		// Save File to datastore
-		fullPath, _ := filepath.Abs("./files/" + fileName)
+		fullPath, _ := filepath.Abs(c.Persistance.GlusterPath + "/files/" + directory)
 		saveFileToDatastore(timestampUIDString, fullPath, c.Persistance)
 
 		atqUpload := app.AtqDatabindUpload{
@@ -140,4 +171,29 @@ func parseDatabind(collection *map[string]string) app.AtqDatabindUploadCollectio
 	}
 
 	return typeCollection
+}
+
+func ensureZip(fileName string) error {
+
+	var extension = filepath.Ext(fileName)
+
+	if extension != ".zip" {
+		return errors.New("The uploaded file is not a ZIP file")
+	}
+
+	return nil
+}
+
+func unzip(glusterPath, fileName, fileID string) (string, error) {
+	input := glusterPath + "/files/" + fileName
+	output := glusterPath + "/files/" + fileID
+	err := archiver.Zip.Open(input, output)
+
+	return output, err
+}
+
+func deleteFile(fileName string) error {
+	file := "./files/" + fileName
+	err := os.Remove(file)
+	return err
 }

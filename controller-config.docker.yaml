@@ -1,5 +1,5 @@
 port: 8080
-glusterpath: /Users/marcostenrero/Documents/goProjects/src/github.com/mtenrero/ATQ-Director
+glusterpath: /gluster
 images:
   - imageName: mtenrero/jmeter
     args:

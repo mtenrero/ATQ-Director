@@ -17,7 +17,6 @@ import (
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/goatest"
 	"github.com/mtenrero/ATQ-Director/app"
-	uuid "github.com/satori/go.uuid"
 	"io"
 	"log"
 	"net/http"
@@ -552,7 +551,7 @@ func DeleteTaskTaskNotIdentified(t goatest.TInterface, ctx context.Context, serv
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func InspectTaskErrorCreatingTheTask(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.TaskController, id uuid.UUID) (http.ResponseWriter, *app.AtqTask) {
+func InspectTaskErrorCreatingTheTask(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.TaskController, id string) (http.ResponseWriter, *app.AtqTask) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -626,7 +625,7 @@ func InspectTaskErrorCreatingTheTask(t goatest.TInterface, ctx context.Context, 
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func InspectTaskErrorCreatingTheTaskFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.TaskController, id uuid.UUID) (http.ResponseWriter, *app.AtqTaskFull) {
+func InspectTaskErrorCreatingTheTaskFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.TaskController, id string) (http.ResponseWriter, *app.AtqTaskFull) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -700,7 +699,7 @@ func InspectTaskErrorCreatingTheTaskFull(t goatest.TInterface, ctx context.Conte
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func InspectTaskOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.TaskController, id uuid.UUID) (http.ResponseWriter, *app.AtqTask) {
+func InspectTaskOK(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.TaskController, id string) (http.ResponseWriter, *app.AtqTask) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -774,7 +773,7 @@ func InspectTaskOK(t goatest.TInterface, ctx context.Context, service *goa.Servi
 // It returns the response writer so it's possible to inspect the response headers and the media type struct written to the response.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func InspectTaskOKFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.TaskController, id uuid.UUID) (http.ResponseWriter, *app.AtqTaskFull) {
+func InspectTaskOKFull(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.TaskController, id string) (http.ResponseWriter, *app.AtqTaskFull) {
 	// Setup service
 	var (
 		logBuf bytes.Buffer
@@ -848,7 +847,7 @@ func InspectTaskOKFull(t goatest.TInterface, ctx context.Context, service *goa.S
 // It returns the response writer so it's possible to inspect the response headers.
 // If ctx is nil then context.Background() is used.
 // If service is nil then a default service is created.
-func InspectTaskTaskNotIdentified(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.TaskController, id uuid.UUID) http.ResponseWriter {
+func InspectTaskTaskNotIdentified(t goatest.TInterface, ctx context.Context, service *goa.Service, ctrl app.TaskController, id string) http.ResponseWriter {
 	// Setup service
 	var (
 		logBuf bytes.Buffer

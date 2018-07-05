@@ -19,7 +19,7 @@ pipeline {
                 sh 'go get -u github.com/golang/lint/golint'
                 sh 'go get -u github.com/tebeka/go2xunit'
                 sh 'go get -u golang.org/x/tools/cmd/cover'
-                sh 'go get -u github.com/mattn/goveralls'
+                sh 'go get -u github.com/mtenrero/goveralls'
             }
         }
 
@@ -35,7 +35,18 @@ pipeline {
             }
         }
 
+        stage('Code Coverage') {
+            environment { 
+                COVERTOKEN = credentials('coveralls-token') 
+            }
+            
+            steps {
+                sh 'cd $GOPATH/src/github.com/mtenrero/ATQ-Director && goveralls -coverprofile=coverage.txt -repotoken $COVERTOKEN'
+            }
+        }
+
         stage('Build') {
+            when { expression { env.BRANCH_NAME == 'master' } }
             steps {
                 sh 'cd $GOPATH/src/github.com/mtenrero/ATQ-Director && ./build.sh'
             }

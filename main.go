@@ -15,11 +15,18 @@ import (
 // Persistance is the Global Persistance Instance
 var Persistance *persistance.Persistance
 
-const persistancePath = "./storage/datastore.atq"
+const persistancePath = "/storage/datastore.atq"
 
 func main() {
 	// Create service
 	service := goa.New("ATQ - Director")
+
+	// Load config
+	config, err := configLoader.LoadControllerConfigYaml("./controller-config.yaml")
+	if err != nil {
+		service.LogError("Error loading config file", "configFile", err)
+		os.Exit(-45)
+	}
 
 	// Mount middleware
 	service.Use(middleware.RequestID())
@@ -28,18 +35,10 @@ func main() {
 	service.Use(middleware.Recover())
 
 	// Initialize Persistance Datastore
-	var err error
-	Persistance, err = persistance.InitPersistance(persistancePath)
+	Persistance, err = persistance.InitPersistance(persistancePath, config.GlusterPath)
 	if err != nil {
 		service.LogError("Error initializing datastore", "datastoreErr", err)
 		os.Exit(-200)
-	}
-
-	// Load config
-	config, err := configLoader.LoadControllerConfigYaml("./controller-config.yaml")
-	if err != nil {
-		service.LogError("Error loading config file", "configFile", err)
-		os.Exit(-45)
 	}
 
 	// Mount "databind" controller

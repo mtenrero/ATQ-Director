@@ -1,6 +1,7 @@
 package persistance
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,7 +10,8 @@ import (
 const TestingDBPath = "./storage/dev_testing.atq"
 
 func TestBasicDatastore(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath)
+	absolutePath, _ := filepath.Abs(TestingDBPath)
+	p, err := InitPersistance(absolutePath, "")
 	if err != nil {
 		t.Error(err)
 	}

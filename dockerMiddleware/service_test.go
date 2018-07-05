@@ -49,3 +49,16 @@ func TestRemoveService(t *testing.T) {
 	defer RemoveNetwork("TEST_SERVICEDELETE")
 
 }
+
+/**
+func TestServiceDetails(t *testing.T) {
+	ensureSwarm()
+
+	service, err := ServiceDetails("xweebjfbrm5jteptzbhhscjkx")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Skip(service.UpdateStatus.State)
+}**/

@@ -7,7 +7,7 @@ import (
 )
 
 func TestStoreTask(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath)
+	p, err := InitPersistance(TestingDBPath, ".")
 	if err != nil {
 		t.Error(err)
 	}
@@ -37,7 +37,7 @@ func TestStoreTask(t *testing.T) {
 }
 
 func TestWholeTask(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath)
+	p, err := InitPersistance(TestingDBPath, ".")
 	if err != nil {
 		t.Error(err)
 	}

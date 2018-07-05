@@ -7,27 +7,27 @@ import (
 	"github.com/tidwall/buntdb"
 )
 
-const dbPath = "./storage/atq.db"
-
 // InitPersistance initializes and loads the K/V datastore
-func InitPersistance(path string) (*Persistance, error) {
+func InitPersistance(path string, glusterPath string) (*Persistance, error) {
 	// Attempt to create storage directory ignoring errors
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		os.MkdirAll("./storage", os.ModePerm)
 	}
 
-	db, err := buntdb.Open(path)
+	db, err := buntdb.Open(glusterPath + path)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
 
 	persistance := Persistance{
-		DB: db,
+		DB:          db,
+		GlusterPath: glusterPath,
 	}
 
 	// Initialize indexes
 	persistance.indexFile()
+	persistance.IndexTask()
 
 	return &persistance, nil
 }

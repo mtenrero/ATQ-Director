@@ -525,7 +525,7 @@ func (cmd *InspectTaskCommand) Run(c *client.Client, args []string) error {
 	if len(args) > 0 {
 		path = args[0]
 	} else {
-		path = fmt.Sprintf("/api/task/%v", cmd.ID)
+		path = fmt.Sprintf("/api/task/%v", url.QueryEscape(cmd.ID))
 	}
 	logger := goa.NewLogger(log.New(os.Stderr, "", log.LstdFlags))
 	ctx := goa.WithLogger(context.Background(), logger)

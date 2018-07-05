@@ -1,7 +1,7 @@
 # Automation Test Queue (ATQ): Director
 
-[![Build Status](http://ec2-35-177-127-126.eu-west-2.compute.amazonaws.com:8080/buildStatus/icon?job=ATQ/master)](http://ec2-35-177-127-126.eu-west-2.compute.amazonaws.com:8080/job/ATQ/job/master/)
-[![Coverage Status](https://coveralls.io/repos/github/mtenrero/ATQ-Director/badge.svg)](https://coveralls.io/github/mtenrero/ATQ-Director)
+[![Build Status](http://atq.mtenrero.com:8080/buildStatus/icon?job=ATQ/master)](http://atq.mtenrero.com:8080/job/ATQ/job/master/)
+[![Coverage Status](https://coveralls.io/repos/github/mtenrero/ATQ-Director/badge.svg?branch=master)](https://coveralls.io/github/mtenrero/ATQ-Director?branch=master)
 [![API Documentation](https://img.shields.io/badge/API-Documentation-orange.svg)](https://editor2.swagger.io/?url=https://raw.githubusercontent.com/mtenrero/ATQ-Director/master/swagger/swagger.yaml)
 
 Automation Test Queue is a server-side binary which exposes a HTTP API and communicates with the Docker subsystem.
@@ -43,7 +43,8 @@ And the following versions will be `https:\\host:port\v2...`
 You can specify which images are available to use with ATQ for security reasons with a YAML configuration file with the following structure:
 
 ```yaml
-port: 9050
+port: 8080
+glusterPath: ...
 images:
   - imageName: mtenrero/jmeter
     args:
@@ -56,6 +57,12 @@ images:
 ``` 
 
 All images specified in this file will be pulled from the registries to make them available instantly when requested, so starting time may be increased in the first launch.
+
+### GlusterPath
+
+GlusterPath represents the path on the filsystem which is shared between Docker Swarm nodes in order to ATQ middlewara data be available from all nodes.
+
+It has been tested with GlusterFS and Samba.
 
 ### **Images**
 
@@ -92,8 +99,3 @@ Any feature should be well documented and tested.
 
 Godocs compatible code must be used.
 
-## Disclaimer
-
-**THIS IS AN INITIAL VERSION AND IT'S NOT COMPLETE !!**
-
-_Guarantee it's not provided, use at your own risk._

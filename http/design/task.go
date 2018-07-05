@@ -26,7 +26,7 @@ var _ = Resource("task", func() {
 		Routing(GET("/:id"))
 		Description("Get Task's details")
 		Params(func() {
-			Param("id", UUID, "Task's UUID")
+			Param("id", String, "Task's UUID")
 		})
 		Response("OK", func() {
 			Description("Successful response containing Task data in JSON format")
