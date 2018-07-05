@@ -50,6 +50,7 @@ func TestRemoveService(t *testing.T) {
 
 }
 
+/**
 func TestServiceDetails(t *testing.T) {
 	ensureSwarm()
 
@@ -60,4 +61,4 @@ func TestServiceDetails(t *testing.T) {
 	}
 
 	t.Skip(service.UpdateStatus.State)
-}
+}**/
