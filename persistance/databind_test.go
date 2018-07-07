@@ -7,7 +7,7 @@ import (
 )
 
 func TestStoreAndReadFile(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath, ".")
+	p, err := InitPersistance(TestingDBPath, ".", "localhost")
 	if err != nil {
 		t.Error(err)
 	}
@@ -21,7 +21,7 @@ func TestStoreAndReadFile(t *testing.T) {
 }
 
 func TestReadFileNotPresent(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath, ".")
+	p, err := InitPersistance(TestingDBPath, ".", "localhost")
 	if err != nil {
 		t.Error(err)
 	}
@@ -32,7 +32,7 @@ func TestReadFileNotPresent(t *testing.T) {
 }
 
 func TestReadAllFiles(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath, ".")
+	p, err := InitPersistance(TestingDBPath, ".", "localhost")
 	if err != nil {
 		t.Error(err)
 	}
