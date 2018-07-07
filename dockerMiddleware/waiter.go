@@ -93,7 +93,7 @@ func injectVIPsIntoService(globalAlias, serviceName string, service *app.Service
 		Image:       service.Image,
 		Replicas:    service.Replicas,
 		Tty:         service.Tty,
-		Environment: make([]string, 0),
+		Environment: service.Environment,
 	}
 
 	csvVips := strings.Join(*vips, ",")
