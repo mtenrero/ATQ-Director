@@ -28,12 +28,13 @@ func ContainerSpecMapper(serviceImage *atqTypes.ServiceImage, alias string, moun
 }
 
 // TaskSpecMapper maps the service configuration
-func TaskSpecMapper(containerSpec *swarm.ContainerSpec, networkAttachConfig []swarm.NetworkAttachmentConfig) *swarm.TaskSpec {
+func TaskSpecMapper(containerSpec *swarm.ContainerSpec, networkAttachConfig []swarm.NetworkAttachmentConfig, placement *swarm.Placement) *swarm.TaskSpec {
 
 	return &swarm.TaskSpec{
 		ContainerSpec: containerSpec,
 		Networks:      networkAttachConfig,
 		RestartPolicy: restartPolicyNone(),
+		Placement:     placement,
 	}
 
 }
@@ -103,7 +104,14 @@ func ComposeService(serviceImage *atqTypes.ServiceImage, globalAlias, alias stri
 		}
 	}
 
-	task := TaskSpecMapper(containerSpec, []swarm.NetworkAttachmentConfig{*networkSpec})
+	var task *swarm.TaskSpec
+
+	if strings.Contains(alias, "DISCOVER") {
+		placement := placementManager()
+		task = TaskSpecMapper(containerSpec, []swarm.NetworkAttachmentConfig{*networkSpec}, placement)
+	} else {
+		task = TaskSpecMapper(containerSpec, []swarm.NetworkAttachmentConfig{*networkSpec}, nil)
+	}
 
 	annotations := swarm.Annotations{
 		Name: alias,

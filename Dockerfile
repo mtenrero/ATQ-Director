@@ -1,4 +1,4 @@
-FROM centos
+FROM alpine
 
 LABEL MAINTAINER="Marcos Tenrero"
 
