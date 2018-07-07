@@ -3,6 +3,8 @@
 package main
 
 import (
+	"flag"
+	"log"
 	"os"
 
 	"github.com/goadesign/goa"
@@ -34,12 +36,19 @@ func main() {
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 
+	// Get Params
+	discoveryHost := flag.String("discoveryHost", "localhost", "Custom Discovery Hostname")
+	flag.Parse()
+
 	// Initialize Persistance Datastore
-	Persistance, err = persistance.InitPersistance(persistancePath, config.GlusterPath)
+	Persistance, err = persistance.InitPersistance(persistancePath, config.GlusterPath, *discoveryHost)
 	if err != nil {
 		service.LogError("Error initializing datastore", "datastoreErr", err)
 		os.Exit(-200)
 	}
+
+	log.Print("DISCOVERY_HOSTNAME: ")
+	log.Println(Persistance.DiscoveryHost)
 
 	// Mount "databind" controller
 	c := NewDatabindController(service, Persistance)

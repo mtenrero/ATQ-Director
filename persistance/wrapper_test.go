@@ -7,7 +7,7 @@ import (
 )
 
 func TestDeleteNotExists(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath, ".")
+	p, err := InitPersistance(TestingDBPath, ".", "localhost")
 	if err != nil {
 		t.Error(err)
 	}
@@ -20,7 +20,7 @@ func TestDeleteNotExists(t *testing.T) {
 }
 
 func TestStoreDuplicatedKey(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath, ".")
+	p, err := InitPersistance(TestingDBPath, ".", "localhost")
 	if err != nil {
 		t.Error(err)
 	}
@@ -35,7 +35,7 @@ func TestStoreDuplicatedKey(t *testing.T) {
 }
 
 func TestIterateStringString(t *testing.T) {
-	p, err := InitPersistance(TestingDBPath, ".")
+	p, err := InitPersistance(TestingDBPath, ".", "localhost")
 	if err != nil {
 		t.Error(err)
 	}

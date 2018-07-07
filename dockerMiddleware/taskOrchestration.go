@@ -46,13 +46,13 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 	}
 
 	// Init Worker Service
-	worker, err = InitService(Worker, task.Name, task.Worker, discovererNetworkID, persistance)
+	worker, err = InitService("WORKER", task.Name, task.Worker, discovererNetworkID, persistance)
 	if err != nil {
 		return nil, err
 	}
 
 	// Wait until service upstart
-	errWaiting := VIPSWaiter(task.Name, task.Worker.Alias, *task.Worker.Replicas, GlobalTimeoutSeconds, Worker)
+	errWaiting := VIPSWaiter(task.Name, task.Worker.Alias, *task.Worker.Replicas, GlobalTimeoutSeconds, Worker, persistance.DiscoveryHost)
 	if errWaiting != nil {
 		return nil, errWaiting
 	}
@@ -68,13 +68,13 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 	// Inject Worker Service VIPs into an Environment variable
 	newService, err := injectVIPsIntoService(task.Name, task.Worker.Alias, task.Master)
 
-	master, err = InitService(Master, task.Name, newService, discovererNetworkID, persistance)
+	master, err = InitService("MASTER", task.Name, newService, discovererNetworkID, persistance)
 	if err != nil {
 		return nil, err
 	}
 
 	// Wait until service upstart
-	errWaiting = VIPSWaiter(task.Name, task.Master.Alias, *task.Master.Replicas, GlobalTimeoutSeconds, Master)
+	errWaiting = VIPSWaiter(task.Name, task.Master.Alias, *task.Master.Replicas, GlobalTimeoutSeconds, Master, persistance.DiscoveryHost)
 	if errWaiting != nil {
 		return nil, errWaiting
 	}
@@ -103,9 +103,9 @@ func TaskMasterWorker(task *app.TaskPayload, persistance *persistance.Persistanc
 }
 
 // InitService initializes the service
-func InitService(serviceType Service, globalAlias string, service *app.ServicePayload, networkID *string, persistance *persistance.Persistance) (*app.AtqService, error) {
+func InitService(serviceType string, globalAlias string, service *app.ServicePayload, networkID *string, persistance *persistance.Persistance) (*app.AtqService, error) {
 
-	var workerBaseAlias = globalAlias + "_" + service.Alias + serviceType.Name()
+	var workerBaseAlias = globalAlias + "_" + service.Alias + serviceType
 	var volumeBindPath *string
 	var serviceCreateResponse *dockerTypes.ServiceCreateResponse
 	var err error
@@ -123,12 +123,12 @@ func InitService(serviceType Service, globalAlias string, service *app.ServicePa
 	}
 
 	switch serviceType {
-	case Master:
+	case "MASTER":
 		if networkID == nil {
 			return nil, errors.New("networkID must be specified when creating Master Services")
 		}
 		serviceCreateResponse, err = ComposeService(&serviceImage, globalAlias, workerBaseAlias, volumeBindPath, replicatedService(*service.Replicas), networkID)
-	case Worker:
+	case "WORKER":
 		serviceCreateResponse, err = ComposeService(&serviceImage, globalAlias, workerBaseAlias, volumeBindPath, replicatedService(*service.Replicas), networkID)
 	}
 
