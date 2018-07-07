@@ -54,7 +54,7 @@ func ServiceHostWaiter(serviceID string, replicas int, timeout int) error {
 
 // VIPSWaiter await for a given amount of VIPS specified in the parameter.
 // Timeout in seconds
-func VIPSWaiter(globalAlias, serviceName string, replicas int, timeout int, service Service) error {
+func VIPSWaiter(globalAlias, serviceName string, replicas int, timeout int, service Service, host string) error {
 
 	var vipsExpected = replicas
 
@@ -66,7 +66,7 @@ func VIPSWaiter(globalAlias, serviceName string, replicas int, timeout int, serv
 	for {
 		select {
 		case <-tick:
-			vips, _ := dnsdiscovery.Discovery("http://localhost:9090/api/", globalAlias+"_"+serviceName+service.Name())
+			vips, _ := dnsdiscovery.Discovery("http://"+host+":9090/api/", globalAlias+"_"+serviceName+service.Name())
 
 			vipsAmount := len(*vips)
 
@@ -86,7 +86,15 @@ func injectVIPsIntoService(globalAlias, serviceName string, service *app.Service
 		return nil, err
 	}
 
-	newService := *service
+	newService := app.ServicePayload{
+		Alias:       service.Alias,
+		Args:        service.Args,
+		Fileid:      service.Fileid,
+		Image:       service.Image,
+		Replicas:    service.Replicas,
+		Tty:         service.Tty,
+		Environment: make([]string, 0),
+	}
 
 	csvVips := strings.Join(*vips, ",")
 

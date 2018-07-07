@@ -11,7 +11,7 @@ const TestingDBPath = "./storage/dev_testing.atq"
 
 func TestBasicDatastore(t *testing.T) {
 	absolutePath, _ := filepath.Abs(TestingDBPath)
-	p, err := InitPersistance(absolutePath, "")
+	p, err := InitPersistance(absolutePath, "", "localhost")
 	if err != nil {
 		t.Error(err)
 	}
